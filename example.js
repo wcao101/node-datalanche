@@ -19,6 +19,7 @@ var f = dlanche.createFilter(
     dlanche.createFilter("dosage_form", dlanche.OPS.EQ, "capsule")
 );
 
+console.log("FILTER");
 console.log(JSON.stringify(f, null, '  '));
 
 // params
@@ -45,23 +46,27 @@ var params = {
 
 // connection
 
-var connection = dlanche.createConnection("", "");
+var apiKey = "";    // insert your API key
+var dataSet = "medical-codes-ndc";
+var connection = dlanche.createConnection(apiKey, "");
 
-connection.getSchema("medical-codes-ndc", function(err, req, res, schema) {
+connection.getSchema(dataSet, function(err, req, res, schema) {
+    console.log("\nSCHEMA");
     if (err) {
         console.log(err);
         return;
     }
     console.log(JSON.stringify(schema, null, '  '));
-});
 
-connection.read("medical-codes-ndc", params, function(err, req, res, data) {   
-    if (err) {
-        console.log(err);
-        return;
-    }
-    console.log(JSON.stringify(data, null, '  '));
-});
+    connection.read(dataSet, params, function(err, req, res, data) {
+        console.log("\nREAD DATA");
+        if (err) {
+            console.log(err);
+            return;
+        }
+        console.log(JSON.stringify(data, null, '  '));
 
-// TODO: connection.write()
+        // TODO: connection.write()
+    });
+});
 
