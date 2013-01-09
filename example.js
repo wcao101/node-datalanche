@@ -63,16 +63,5 @@ connection.read("medical-codes-ndc", params, function(err, req, res, data) {
     console.log(JSON.stringify(data, null, '  '));
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
+// TODO: connection.write()
 
