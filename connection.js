@@ -59,12 +59,21 @@ Connection.prototype.read = function(dataSetName, params, callback) {
         }
         params.order = items.toString();
     }
-
-    params.limit = params.limit.toString();
-    params.skip = params.skip.toString();
-    params.total = params.total.toString();
-    params.filter = JSON.stringify(params.filter);
-    params.fields = params.fields.toString();
+    if (params.limit) {
+        params.limit = params.limit.toString();
+    }
+    if (params.skip) {
+        params.skip = params.skip.toString();
+    }
+    if (params.total) {
+        params.total = params.total.toString();
+    }
+    if (params.filter) {
+        params.filter = JSON.stringify(params.filter);
+    }
+    if (params.fields) {
+        params.fields = params.fields.toString();
+    }
 
     // URL encode parameters
     var str = querystring.stringify(params);

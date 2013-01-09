@@ -7,6 +7,9 @@
 //
 var dlanche = require("./lib");
 
+var apiKey = "";    // insert your API key
+var dataSet = "medical-codes-ndc";
+
 // filter
 
 var f = dlanche.createFilter(
@@ -46,8 +49,6 @@ var params = {
 
 // connection
 
-var apiKey = "";    // insert your API key
-var dataSet = "medical-codes-ndc";
 var connection = dlanche.createConnection(apiKey, "");
 
 connection.getSchema(dataSet, function(err, req, res, schema) {
