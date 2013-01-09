@@ -66,12 +66,13 @@ Connection.prototype.read = function(dataSetName, params, callback) {
     params.filter = JSON.stringify(params.filter);
     params.fields = params.fields.toString();
 
+    // URL encode parameters
     var str = querystring.stringify(params);
     if (str) {
         url += "?" + str;
     }
 
-    console.log(url);
+    //console.log(url);
 
     this.client.get(url, function(err, req, res, obj) {
         if (err) {
