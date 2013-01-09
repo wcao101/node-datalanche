@@ -5,7 +5,7 @@
 // Datalanche, Inc. and may not be used, copied, or distributed
 // without its express permission.
 //
-var dlanche = require('./lib');
+var dlanche = require("./lib");
 
 // filter
 
