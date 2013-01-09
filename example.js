@@ -11,12 +11,12 @@ var dlanche = require("./lib");
 
 var f = dlanche.createFilter(
     dlanche.createFilter(
-        dlanche.createFilter("dosage_form", dlanche.OPS.EQUAL, "capsule"),
+        dlanche.createFilter("dosage_form", dlanche.OPS.EQ, "capsule"),
         dlanche.OPS.OR,
-        dlanche.createFilter("route", dlanche.OPS.EQUAL, "oral")
+        dlanche.createFilter("route", dlanche.OPS.EQ, "oral")
     ),
     dlanche.OPS.AND,
-    dlanche.createFilter("dosage_form", dlanche.OPS.EQUAL, "capsule")
+    dlanche.createFilter("dosage_form", dlanche.OPS.EQ, "capsule")
 );
 
 console.log(JSON.stringify(f, null, '  '));

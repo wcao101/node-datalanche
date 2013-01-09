@@ -28,7 +28,10 @@ var OPS = new Enum([
 
 function Filter(left, operator, right) {
     this.left = left;
-    this.op = operator.toString().toLowerCase();
+    this.op = "";
+    if (operator) {
+        this.op = operator.toString().toLowerCase();
+    }
     this.right = right;
 }
 
