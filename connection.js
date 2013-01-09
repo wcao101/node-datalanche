@@ -23,6 +23,21 @@ function Connection(key, secret) {
 util.inherits(Connection, events.EventEmitter);
 module.exports = Connection;
 
+Connection.prototype.getList = function(callback) {
+
+    var url = "/list";
+
+    // TODO: auth
+
+    this.client.get(url, function(err, req, res, obj) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        callback(err, req, res, JSON.parse(obj));
+    });
+};
+
 Connection.prototype.getSchema = function(dataSetName, callback) {
 
     var url = "/" + querystring.escape(dataSetName) + "/schema";
