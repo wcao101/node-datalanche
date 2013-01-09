@@ -8,7 +8,7 @@
 var dlanche = require("./lib");
 
 var apiKey = "";    // insert your API key
-var dataSet = "medical-codes-ndc";
+var dataSet = "medical_codes_ndc";
 
 // filter
 
