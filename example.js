@@ -28,6 +28,7 @@ console.log(JSON.stringify(f, null, '  '));
 // params
 
 var params = {
+    distinct: false,
     fields: [
         "dosage_form",
         "route",

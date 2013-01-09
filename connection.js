@@ -44,20 +44,33 @@ Connection.prototype.read = function(dataSetName, params, callback) {
 
     // TODO: auth
 
-    if (params.group && params.group.length > 0) {
+    if (params.group) {
         var items = [];
         for (var i = 0; i < params.group.length; i++) {
             items.push(params.group[i].field + ":" + params.group[i].type);
         }
-        params.group = items.toString();
+
+        if (items.length > 0) {
+            params.group = items.toString();
+        } else {
+            params.group = undefined;
+        }
     }
 
-    if (params.order && params.order.length > 0) {
+    if (params.order) {
         var items = [];
         for (var i = 0; i < params.order.length; i++) {
             items.push(params.order[i].field + ":" + params.order[i].type);
         }
-        params.order = items.toString();
+
+        if (items.length > 0) {
+            params.order = items.toString();
+        } else {
+            params.order = undefined;
+        }
+    }
+    if (params.distinct) {
+        params.distinct = params.distinct.toString();
     }
     if (params.limit) {
         params.limit = params.limit.toString();
