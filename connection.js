@@ -58,30 +58,30 @@ Connection.prototype.read = function(dataSetName, params, callback) {
         url = addParam(url, numParams++, "limit", params.limit.toString());
     }
     if (params.skip) {
-        url = addParam(url, numParams++, "offset", params.skip.toString());
+        url = addParam(url, numParams++, "skip", params.skip.toString());
     }
     if (params.total) {
         url = addParam(url, numParams++, "total", params.total.toString());
     }
     if (params.filter) {
-        url = addParam(url, numParams++, "where", JSON.stringify(params.filter));
+        url = addParam(url, numParams++, "filter", JSON.stringify(params.filter));
     }
     if (params.group && params.group.length > 0) {
         var items = [];
         for (var i = 0; i < params.group.length; i++) {
             items.push(params.group[i].field + ":" + params.group[i].type);
         }
-        url = addParam(url, numParams++, "groupby", items.toString());
+        url = addParam(url, numParams++, "group", items.toString());
     }
     if (params.order && params.order.length > 0) {
         var items = [];
         for (var i = 0; i < params.order.length; i++) {
             items.push(params.order[i].field + ":" + params.order[i].type);
         }
-        url = addParam(url, numParams++, "orderby", items.toString());
+        url = addParam(url, numParams++, "order", items.toString());
     }
     if (params.fields && params.fields.length > 0) {
-        url = addParam(url, numParams++, "select", params.fields.toString());
+        url = addParam(url, numParams++, "fields", params.fields.toString());
     }
 
     console.log(url);
