@@ -26,8 +26,7 @@ module.exports = Connection;
 Connection.prototype.getList = function(callback) {
 
     var url = "/list";
-
-    // TODO: auth
+    url += "?key=" + querystring.escape(this.authKey);
 
     this.client.get(url, function(err, req, res, obj) {
         if (err) {
@@ -41,8 +40,7 @@ Connection.prototype.getList = function(callback) {
 Connection.prototype.getSchema = function(dataSetName, callback) {
 
     var url = "/" + querystring.escape(dataSetName) + "/schema";
-
-    // TODO: auth
+    url += "?key=" + querystring.escape(this.authKey);
 
     this.client.get(url, function(err, req, res, obj) {
         if (err) {
@@ -57,7 +55,7 @@ Connection.prototype.read = function(dataSetName, params, callback) {
 
     var url = "/" + querystring.escape(dataSetName) + "/read";
 
-    // TODO: auth
+    params.key = this.authKey;
 
     if (params.group) {
         var items = [];

@@ -5,9 +5,15 @@
 // Datalanche, Inc. and may not be used, copied, or distributed
 // without its express permission.
 //
+var nconf = require("nconf");
 var dlanche = require("./lib");
 
-var apiKey = "";    // insert your API key
+// CMD: node example.js --key YOUR_API_KEY
+
+nconf.use("memory");
+nconf.env().argv();
+
+var apiKey = nconf.get("key");
 
 // filter
 
