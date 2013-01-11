@@ -10,18 +10,24 @@ var querystring = require('querystring');
 var restify = require("restify");
 var util = require("util");
 
-function Connection(key, secret) {
+function Connection() {
     
     events.EventEmitter.call(this);
 
-    this.authKey = key;
-    this.authSecret = secret;
+    this.authKey = "";
+    this.authSecret = "";
     this.client = restify.createJsonClient({
         url: "http://localhost:3000",
     });
 }
 util.inherits(Connection, events.EventEmitter);
 module.exports = Connection;
+
+Connection.prototype.authenticate = function(key, secret, callback) {
+    this.authKey = key;
+    this.authSecret = secret;
+    callback(null);
+};
 
 Connection.prototype.getList = function(callback) {
 

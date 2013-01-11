@@ -21,10 +21,10 @@ var f = dlanche.createFilter(
     dlanche.createFilter(
         dlanche.createFilter("dosage_form", dlanche.OPS.EQ, "capsule"),
         dlanche.OPS.OR,
-        dlanche.createFilter("route", dlanche.OPS.EQ, "oral")
+        dlanche.createFilter("dosage_form", dlanche.OPS.EQ, "tablet")
     ),
     dlanche.OPS.AND,
-    dlanche.createFilter("dosage_form", dlanche.OPS.EQ, "capsule")
+    dlanche.createFilter("product_type", dlanche.OPS.EQ, "human otc drug")
 );
 
 // params
@@ -46,42 +46,56 @@ var params = {
         { field: "dosage_form", type: "asc" },
         { field: "product_type", type: "desc" },
     ],
-    skip: 4,
+    skip: 0,
     total: false,
 };
 
 // connection
 
-var connection = dlanche.createConnection(apiKey, "");
+var connection = dlanche.createConnection();
 
-connection.getList(function(err, req, res, list) {
-    console.log("\nLIST");
+connection.authenticate(apiKey, "", function(err) {
+    console.log("\nAUTH");
     if (err) {
         console.log(err);
         return;
     }
-    console.log(JSON.stringify(list, null, '  '));
+    console.log("authentication successful");
 
-    var dataSet = list.datasets[0];
-
-    connection.getSchema(dataSet, function(err, req, res, schema) {
-        console.log("\nSCHEMA");
+    // /list
+    connection.getList(function(err, req, res, list) {
+        console.log("\nLIST");
         if (err) {
             console.log(err);
             return;
         }
-        console.log(JSON.stringify(schema, null, '  '));
+        console.log(JSON.stringify(list, null, '  '));
 
-        connection.read(dataSet, params, function(err, req, res, data) {
-            console.log("\nREAD");
+        var dataSet = list.datasets[0];
+
+        // /:data_set_name/schema
+        connection.getSchema(dataSet, function(err, req, res, schema) {
+            console.log("\nSCHEMA");
             if (err) {
                 console.log(err);
                 return;
             }
-            console.log(JSON.stringify(data, null, '  '));
+            console.log(JSON.stringify(schema, null, '  '));
 
-            // TODO: connection.write()
+            // /:data_set_name/read
+            connection.read(dataSet, params, function(err, req, res, data) {
+                console.log("\nREAD");
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log(JSON.stringify(data, null, '  '));
+
+                // TODO: connection.write()
+            });
         });
     });
 });
+
+
 
