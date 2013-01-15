@@ -10,6 +10,46 @@ var querystring = require('querystring');
 var restify = require("restify");
 var util = require("util");
 
+// helper functions
+
+function isArray(obj) {
+    return toString.call(obj) == '[object Array]';
+}
+
+function isObject(obj) {
+    return obj === Object(obj);
+}
+
+function isString(obj) {
+    return toString.call(obj) == '[object String]';
+}
+
+function isObjectArray(obj) {
+    if (isArray(obj) === true) {
+        for (var i = 0; i < obj.length; i++) {
+            if (isObject(obj[i]) === false) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+function isStringArray(obj) {
+    if (isArray(obj) === true) {
+        for (var i = 0; i < obj.length; i++) {
+            if (isString(obj[i]) === false) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+// constructor
+
 function Connection() {
     
     events.EventEmitter.call(this);
@@ -22,6 +62,8 @@ function Connection() {
 }
 util.inherits(Connection, events.EventEmitter);
 module.exports = Connection;
+
+// methods
 
 Connection.prototype.authenticate = function(key, secret, callback) {
     this.authKey = key;
@@ -64,6 +106,12 @@ Connection.prototype.read = function(dataSetName, params, callback) {
     params.key = this.authKey;
 
     if (params.group) {
+
+        if (isObjectArray(params.group) === false) {
+            callback(new restify.InvalidContentError('invalid group format: must be array of { field: "", type: "" }'));
+            return;
+        }
+
         var items = [];
         for (var i = 0; i < params.group.length; i++) {
             items.push(params.group[i].field + ":" + params.group[i].type);
@@ -77,6 +125,12 @@ Connection.prototype.read = function(dataSetName, params, callback) {
     }
 
     if (params.order) {
+
+        if (isObjectArray(params.order) === false) {
+            callback(new restify.InvalidContentError('invalid order format: must be array of { field: "", type: "" }'));
+            return;
+        }
+
         var items = [];
         for (var i = 0; i < params.order.length; i++) {
             items.push(params.order[i].field + ":" + params.order[i].type);
@@ -104,6 +158,10 @@ Connection.prototype.read = function(dataSetName, params, callback) {
         params.filter = JSON.stringify(params.filter);
     }
     if (params.fields) {
+        if (isStringArray(params.fields) === false) {
+            callback(new restify.InvalidContentError('invalid fields format: must be array of strings'));
+            return;
+        }
         params.fields = params.fields.toString();
     }
 
