@@ -90,7 +90,7 @@ function handleResult(startTime, test, err, req, res, data, callback) {
 
 function getList(test, callback) {
 
-    connection.authenticate(test.params.key, test.params.secret, function(err) {
+    connection.authenticate(test.parameters.key, test.parameters.secret, function(err) {
 
         if (err) {
             // something really bad happened
@@ -107,7 +107,7 @@ function getList(test, callback) {
 
 function getSchema(test, callback) {
 
-    connection.authenticate(test.params.key, test.params.secret, function(err) {
+    connection.authenticate(test.parameters.key, test.parameters.secret, function(err) {
 
         if (err) {
             // something really bad happened
@@ -124,7 +124,7 @@ function getSchema(test, callback) {
 
 function read(test, callback) {
 
-    connection.authenticate(test.params.key, test.params.secret, function(err) {
+    connection.authenticate(test.parameters.key, test.parameters.secret, function(err) {
 
         if (err) {
             // something really bad happened
@@ -133,11 +133,11 @@ function read(test, callback) {
         }
 
         // read() does not care about these, remove them
-        delete test.params.key;
-        delete test.params.secret;
+        delete test.parameters.key;
+        delete test.parameters.secret;
 
         var time = process.hrtime();
-        connection.read(test.dataset, test.params, function(err, req, res, data) {
+        connection.read(test.dataset, test.parameters, function(err, req, res, data) {
             handleResult(time, test, err, req, res, data, callback);
         });
     });
@@ -174,8 +174,8 @@ for (var i = 0; i < testFiles.length; i++) {
         var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles[i], 'utf8'));
         for (var j = 0; j < json.tests.length; j++) {
             var test = json.tests[j];
-            if (test.params.key === 'valid_key') {
-                test.params.key = validKey;
+            if (test.parameters.key === 'valid_key') {
+                test.parameters.key = validKey;
             }
             tests.push(json.tests[j]);
         }
