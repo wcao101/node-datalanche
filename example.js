@@ -5,26 +5,26 @@
 // Datalanche, Inc. and may not be used, copied, or distributed
 // without its express permission.
 //
-var nconf = require("nconf");
-var dlanche = require("./lib");
+var nconf = require('nconf');
+var dlanche = require('./lib');
 
 // CMD: node example.js --key YOUR_API_KEY
 
-nconf.use("memory");
+nconf.use('memory');
 nconf.env().argv();
 
-var apiKey = nconf.get("key");
+var apiKey = nconf.get('key');
 
 // filter
 
 var f = dlanche.createFilter(
     dlanche.createFilter(
-        dlanche.createFilter("dosage_form", dlanche.OPS.EQ, "capsule"),
-        dlanche.OPS.OR,
-        dlanche.createFilter("dosage_form", dlanche.OPS.EQ, "tablet")
+        dlanche.createFilter('dosage_form', dlanche.FilterOp.EQ, 'capsule'),
+        dlanche.FilterOp.OR,
+        dlanche.createFilter('dosage_form', dlanche.FilterOp.EQ, 'tablet')
     ),
-    dlanche.OPS.AND,
-    dlanche.createFilter("product_type", dlanche.OPS.EQ, "human otc drug")
+    dlanche.FilterOp.AND,
+    dlanche.createFilter('product_type', dlanche.FilterOp.EQ, 'human otc drug')
 );
 
 // params
@@ -32,19 +32,19 @@ var f = dlanche.createFilter(
 var params = {
     distinct: false,
     fields: [
-        "dosage_form",
-        "route",
-        "product_type",
+        'dosage_form',
+        'route',
+        'product_type',
     ],
     filter: f,
     group: [
-        { field: "dosage_form", type: "asc" },
-        { field: "product_type", type: "desc" },
+        { field: 'dosage_form', type: dlanche.GroupType.ASC },
+        { field: 'product_type', type: dlanche.GroupType.DESC },
     ],
     limit: 10,
     order: [
-        { field: "dosage_form", type: "asc" },
-        { field: "product_type", type: "desc" },
+        { field: 'dosage_form', type: dlanche.OrderType.ASC },
+        { field: 'product_type', type: dlanche.OrderType.DESC },
     ],
     skip: 0,
     total: false,
@@ -54,17 +54,17 @@ var params = {
 
 var connection = dlanche.createConnection();
 
-connection.authenticate(apiKey, "", function(err) {
-    console.log("\nAUTH");
+connection.authenticate(apiKey, '', function(err) {
+    console.log('\nAUTH');
     if (err) {
         console.log(err);
         return;
     }
-    console.log("authentication successful");
+    console.log('authentication successful');
 
     // /list
     connection.getList(function(err, req, res, list) {
-        console.log("\nLIST");
+        console.log('\nLIST');
         if (err) {
             console.log(err);
             return;
@@ -75,7 +75,7 @@ connection.authenticate(apiKey, "", function(err) {
 
         // /:data_set_name/schema
         connection.getSchema(dataSet, function(err, req, res, schema) {
-            console.log("\nSCHEMA");
+            console.log('\nSCHEMA');
             if (err) {
                 console.log(err);
                 return;
@@ -84,7 +84,7 @@ connection.authenticate(apiKey, "", function(err) {
 
             // /:data_set_name/read
             connection.read(dataSet, params, function(err, req, res, data) {
-                console.log("\nREAD");
+                console.log('\nREAD');
                 if (err) {
                     console.log(err);
                     return;

@@ -5,10 +5,10 @@
 // Datalanche, Inc. and may not be used, copied, or distributed
 // without its express permission.
 //
-var events = require("events");
+var events = require('events');
 var querystring = require('querystring');
-var restify = require("restify");
-var util = require("util");
+var restify = require('restify');
+var util = require('util');
 
 // helper functions
 
@@ -54,10 +54,10 @@ function Connection() {
     
     events.EventEmitter.call(this);
 
-    this.authKey = "";
-    this.authSecret = "";
+    this.authKey = '';
+    this.authSecret = '';
     this.client = restify.createJsonClient({
-        url: "http://localhost:3000",
+        url: 'http://localhost:3000',
     });
 }
 util.inherits(Connection, events.EventEmitter);
@@ -73,8 +73,8 @@ Connection.prototype.authenticate = function(key, secret, callback) {
 
 Connection.prototype.getList = function(callback) {
 
-    var url = "/list";
-    url += "?key=" + querystring.escape(this.authKey);
+    var url = '/list';
+    url += '?key=' + querystring.escape(this.authKey);
 
     this.client.get(url, function(err, req, res, obj) {
         if (err) {
@@ -87,8 +87,8 @@ Connection.prototype.getList = function(callback) {
 
 Connection.prototype.getSchema = function(dataSetName, callback) {
 
-    var url = "/" + querystring.escape(dataSetName) + "/schema";
-    url += "?key=" + querystring.escape(this.authKey);
+    var url = '/' + querystring.escape(dataSetName) + '/schema';
+    url += '?key=' + querystring.escape(this.authKey);
 
     this.client.get(url, function(err, req, res, obj) {
         if (err) {
@@ -101,45 +101,57 @@ Connection.prototype.getSchema = function(dataSetName, callback) {
 
 Connection.prototype.read = function(dataSetName, params, callback) {
 
-    var url = "/" + querystring.escape(dataSetName) + "/read";
+    var url = '/' + querystring.escape(dataSetName) + '/read';
 
     params.key = this.authKey;
 
     if (params.group) {
 
-        if (isObjectArray(params.group) === false) {
-            callback(new restify.InvalidContentError('invalid group format: must be array of { field: "", type: "" }'));
-            return;
-        }
+        if (isArray(params.group) === true) {
 
-        var items = [];
-        for (var i = 0; i < params.group.length; i++) {
-            items.push(params.group[i].field + ":" + params.group[i].type);
-        }
+            var items = [];
+            for (var i = 0; i < params.group.length; i++) {
+                var item = params.group[i];
 
-        if (items.length > 0) {
-            params.group = items.toString();
+                if (item.field && item.type) {
+                    item = item.field + ':' + item.type.toString().toLowerCase();
+                } else if (item.field) {
+                    item = item.field;
+                }
+
+                items.push(item);
+            }
+
+            if (items.length > 0) {
+                params.group = items.toString();
+            }
         } else {
-            params.group = undefined;
+            params.group = params.group.toString();
         }
     }
 
     if (params.order) {
 
-        if (isObjectArray(params.order) === false) {
-            callback(new restify.InvalidContentError('invalid order format: must be array of { field: "", type: "" }'));
-            return;
-        }
+        if (isArray(params.order) === true) {
 
-        var items = [];
-        for (var i = 0; i < params.order.length; i++) {
-            items.push(params.order[i].field + ":" + params.order[i].type);
-        }
+            var items = [];
+            for (var i = 0; i < params.order.length; i++) {
+                var item = params.order[i];
 
-        if (items.length > 0) {
-            params.order = items.toString();
+                if (item.field && item.type) {
+                    item = item.field + ':' + item.type.toString().toLowerCase();
+                } else if (item.field) {
+                    item = item.field;
+                }
+
+                items.push(item);
+            }
+
+            if (items.length > 0) {
+                params.order = items.toString();
+            }
         } else {
-            params.order = undefined;
+            params.order = params.order.toString();
         }
     }
     if (params.distinct) {
@@ -158,17 +170,13 @@ Connection.prototype.read = function(dataSetName, params, callback) {
         params.filter = JSON.stringify(params.filter);
     }
     if (params.fields) {
-        if (isStringArray(params.fields) === false) {
-            callback(new restify.InvalidContentError('invalid fields format: must be array of strings'));
-            return;
-        }
         params.fields = params.fields.toString();
     }
 
     // URL encode parameters
     var str = querystring.stringify(params);
     if (str) {
-        url += "?" + str;
+        url += '?' + str;
     }
 
     //console.log(url);
