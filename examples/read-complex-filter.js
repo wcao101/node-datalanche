@@ -1,11 +1,11 @@
-var dlanche = require('datalanche');
+var dlanche = require('../lib');
 
 var API_KEY = '';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
 var DATA_SET = 'medical_codes_ndc';
 
 // creates a complex filter
-// only return rows where (dosage_form = 'capsule' or dosage_form = 'tablet') and product_type = 'human otc drug'
+// only return rows where ((dosage_form = 'capsule' or dosage_form = 'tablet') and product_type contains 'esc')
 var myFilter = dlanche.createFilter(
     dlanche.createFilter(
         dlanche.createFilter('dosage_form', dlanche.FilterOp.EQ, 'capsule'),
@@ -13,7 +13,7 @@ var myFilter = dlanche.createFilter(
         dlanche.createFilter('dosage_form', dlanche.FilterOp.EQ, 'tablet')
     ),
     dlanche.FilterOp.AND,
-    dlanche.createFilter('product_type', dlanche.FilterOp.EQ, 'human otc drug')
+    dlanche.createFilter('product_type', dlanche.FilterOp.CONTAINS, 'esc')
 );
 
 var readParams = {

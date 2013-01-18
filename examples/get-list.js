@@ -1,4 +1,4 @@
-var dlanche = require('datalanche');
+var dlanche = require('../lib');
 
 var API_KEY = '';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
