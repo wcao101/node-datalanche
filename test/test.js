@@ -48,8 +48,8 @@ function handleResult(startTime, test, err, req, res, data, callback) {
     
     if (err) {
         actual.statusCode = err.statusCode;
-        actual.exception = err.name;
-        actual.data = err.message;
+        actual.exception = err.body.code;
+        actual.data = err.body.message;
     } else {
         actual.statusCode = res.statusCode;
         actual.data = data;
