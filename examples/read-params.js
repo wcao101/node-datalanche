@@ -13,15 +13,15 @@ var readParams = {
     ],
     filter: null, // look at read-filter.js or read-complex-filter.js
     group: [
-        { field: 'dosage_form', type: dlanche.GroupType.ASC },
-        { field: 'product_type', type: dlanche.GroupType.DESC }
+        'dosage_form',
+        'product_type',
     ],
     limit: 5,
-    order: [
+    skip: 0,
+    sort: [
         { field: 'dosage_form', type: dlanche.OrderType.ASC },
         { field: 'product_type', type: dlanche.OrderType.DESC }
     ],
-    skip: 0,
     total: false
 };
 

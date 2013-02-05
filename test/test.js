@@ -66,7 +66,7 @@ function handleResult(startTime, test, err, req, res, data, callback) {
     if (!dataDiff) {
         dataDiff = '';
     } else {
-        //console.log(JSON.stringify(actual.data, null, '    '));
+        console.log(JSON.stringify(actual.data, null, '    '));
     }
 
     delete test.expected.data;
