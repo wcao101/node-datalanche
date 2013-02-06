@@ -5,17 +5,12 @@ var API_SECRET = ''; // Leave blank until OAuth supported.
 var DATA_SET = 'medical_codes_ndc';
 
 var readParams = {
-    distinct: false,
     fields: [
         'dosage_form',
         'route',
         'product_type'
     ],
     filter: null, // look at read-filter.js or read-complex-filter.js
-    group: [
-        'dosage_form',
-        'product_type',
-    ],
     limit: 5,
     skip: 0,
     sort: [
