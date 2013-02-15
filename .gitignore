@@ -1,6 +1,2 @@
 *~
-*.pyc
-.DS_Store
-.idea
-*.iml
-build/node-build/
+/node_modules

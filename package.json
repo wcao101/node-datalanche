@@ -1,0 +1,36 @@
+{
+    "author": {
+        "name": "Datalanche, Inc.",
+        "url": "https://www.datalanche.com"
+    },
+    "name": "datalanche",
+    "homepage": "https://github.com/datalanche/node-datalanche",
+    "description": "Node.js client for Datalanche REST API.",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/datalanche/node-datalanche.git"
+    },
+    "main": "lib/index.js",
+    "directories": {
+        "lib": "./lib"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/datalanche/node-datalanche/raw/master/LICENSE"
+        }
+    ],
+    "engines": {
+        "node": ">=0.8"
+    },
+    "dependencies": {
+        "enum": "0.2.3",
+        "restify": "2.2.1"
+    },
+    "devDependencies": {
+        "async": "0.2.5",
+        "jsondiffpatch": "0.0.7",
+        "nconf": "0.6.7"
+    }
+}
