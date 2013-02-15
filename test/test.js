@@ -1,6 +1,3 @@
-//
-// Copyright © 2012 Datalanche, Inc., all rights reserved.
-//
 var async = require('async');
 var dlanche = require('../lib');
 var fs = require('fs');
