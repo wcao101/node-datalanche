@@ -1,7 +1,7 @@
 node-datalanche
 ===============
 
-Node.js client for Datalanche's REST API.
+Node.js client for [Datalanche's](https://www.datalanche.com) REST API.
 
 ## Install
 
@@ -12,14 +12,14 @@ Node.js client for Datalanche's REST API.
  
 ## Establishing a Connection
 
-Create a connection object then authenticate using your account's API key which can be found in your 
+Create a connection object then call `authenticate()` using your account's API key which can be found in your 
 [account settings](https://www.datalanche.com/account). A future release will support 
 [OAuth](http://en.wikipedia.org/wiki/OAuth) which will require an API secret as well.
 
-```javascript
+```js
 var dlanche = require('datalanche');
 
-var API_KEY = 'your_account_key';
+var API_KEY = 'your_api_key';
 var API_SECRET = ''; // leave empty, needed when OAuth supported
 
 var connection = dlanche.createConnection();
@@ -33,31 +33,29 @@ connection.authenticate(API_KEY, API_SECRET, function(err) {
 });
 ```
     
-## Getting Dataset List
+## Data Set List
 
-In order to get a listing of the datasets avaialbe throught the API you must first call 'GetList()'. This will return a string object in JSON format with a list of the available datasets.
+`connection.getList()` will retrieve a list of all data sets you have access to. Data sets are also listed on our 
+[website](https://www.datalanche.com/datasets).
 
-Definition:
+```js
+connection.getList(function(err, req, res, list)) {
+    console.log(JSON.stringify(list, null, '  '));
+});
+```
+ 
+## Data Set Schema
 
-    public string GetList();
+Each data set has a schema which describes it. It includes a list of fields with the following attributes: 
+*name, data_type, description, flags*.
 
-Example:
+```js
+var dataSetName = 'medical_codes_ndc';
 
-    string result = connection.GetList();
-    
-## Get Chosen Dataset Schema
-
-Each dataset has a Schema that it follows. To request the schema of any dataset call 'GetSchema()'
-
-Definition:
-
-    public string GetSchema(string datasetName); 
-
-* datasetName - the name of the dataset you would like the schema for (can be found with GetList())
-
-Example:
-
-    string result = connection.GetSchema("medical_codes_ndc");
+connection.getSchema(dataSetName, function(err, req, res, schema)) {
+    console.log(JSON.stringify(schema, null, '  '));
+});
+```
 
 ## Read Functions
 
