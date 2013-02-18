@@ -27,13 +27,13 @@ var connection = dlanche.createConnection();
 // only need to authenticate once for a given connection
 connection.authenticate(API_KEY, API_SECRET, function(err) {
     if (err) {
-        console.log(err);
+        return console.log(err);
     }
     console.log('auth success');
 });
 ```
     
-## Data Set List
+## GetList
 
 `connection.getList()` will retrieve a list of all data sets you have access to. Data sets are also listed on our 
 [website](https://www.datalanche.com/datasets).
@@ -44,10 +44,18 @@ connection.getList(function(err, req, res, list)) {
 });
 ```
  
-## Data Set Schema
+## GetSchema
 
-Each data set has a schema which describes it. It includes a list of fields with the following attributes: 
-*name, data_type, description, flags*.
+`connection.getSchema()` will retrieve the schema for a given data set. It has the following format:
+* `description` Description of the data set.
+* `last_update` The date and time when the data set was last updated with this format: `YYYY-mm-dd HH:ii:ss`.
+* `license` The license for the data set.
+    * `name` The name of the license.
+    * `url` A URL to the license (optional).
+* `fields` A list of fields each with the following attributes:
+    * `name` The name of the field.
+    * `data_type` The field's type: `boolean, string, int16, int32, int64, float, double`.
+    * `description` The field's description.
 
 ```js
 var dataSetName = 'medical_codes_ndc';
@@ -57,7 +65,7 @@ connection.getSchema(dataSetName, function(err, req, res, schema)) {
 });
 ```
 
-## Read Functions
+## Read
 
 The 'Read()' function allows complex data to be retieved. Think of the 'Read()' as a SELECT statement in SQL. You decide what types of data you would like and through defined paramters and filters a set of data will be retuned as a string in JSON format.
 
