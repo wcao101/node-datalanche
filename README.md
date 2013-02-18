@@ -67,59 +67,44 @@ connection.getSchema(dataSetName, function(err, req, res, schema)) {
 
 ## Read
 
-The 'Read()' function allows complex data to be retieved. Think of the 'Read()' as a SELECT statement in SQL. You decide what types of data you would like and through defined paramters and filters a set of data will be retuned as a string in JSON format.
+`connection.read()` will retrieve rows of data for a given data set. The returned data can be 
+filtered, sorted, and you can choose which fields are returned. It is similar to a SELECT statement 
+in SQL.
 
-Definition:
+#### Parameters
 
-    public string Read(string dataSetName, DLReadParams parameters);
-    
-#### Simple Read
+* `fields` An array of fields to return. `default = all fields`
+* `filter` A filter which defines which rows are returned. See [Filtering](#filtering) for details.
+* `limit` The number of rows to return. `default = 25, min = 1, max = 100`
+* `skip` The number of rows to skip. `default = 0`
+* `sort` An array of field and sort type pairs. Returned rows will be sorted in the order specified 
+with the following sort types: `asc, desc`.
+* `total` Boolean whether or not to include the total number of rows in the result. This may increase query time.
 
-The most baisc 'Read()' call is to provide default read parameters to the function:
+```js
+var dataSetName = 'medical_codes_ndc';
+var params = {
+    fields: [
+        'dosage_form',
+        'route',
+        'product_type'
+    ],
+    filter: myFilter, // look at the Filtering section below
+    limit: 5,
+    skip: 0,
+    sort: [
+        { field: 'dosage_form', type: dlanche.OrderType.ASC },
+        { field: 'product_type', type: dlanche.OrderType.DESC }
+    ],
+    total: false
+};
 
-    DLReadParams parameters = new DLReadParams();
-    string result = connection.Read("medical_codes_ndc", parameters);
+connection.read(dataSetName, params, function(err, req, res, data)) {
+    console.log(JSON.stringify(data, null, '  '));
+});
+```
 
-The result will be a string object in JSON format of 25 records. This is not filtered, sorted, or contains any special parameters.
-
-#### Read Paramters
-
-The available read parameters allow for greater control over what data is returned. The available read parameters are:
-
-DLReadParams:
-* List<string> fields - a list of fields to be returned in each record
-* string filter - a JSON oject of filter elements (created with DLFilter see Filtering below)
-* int limit - the total number of records to be returned
-* int skip - the amount of records to skip before returning data
-* bool total - return all data or not
-* List<DLSortStruct> sort - the sort order of the data (ascending or descending, see Sorting below)
-
-Example:
-DLReadParams parameters = new DLReadParams();
-    
-    DLReadParams parameters = new DLReadParams();
-    parameters.Fields.Add("dosage_form");                        // returns the fields dosage_form, route, and product_type
-    parameters.Fields.Add("route");
-    parameters.Fields.Add("product_type");
-    parameters.Limit = 10;                                       // return only 10 records
-    parameters.AddSort("dosage_form", DLSortType.Ascending);    // dosage form is sorted in ascending order
-    parameters.AddSort("product_type", DLSortType.Descending);  // product_type is sorted in descending order
-    parameters.Skip = 4;                                         // the first 4 records are skipped
-    parameters.Total = false;                                    // do not return all data
-
-    string result = connection.Read("medical_codes_ndc", parameters);
-    
-#### Sorting
-
-By default, rows returned by read() are sorted in ascending order by row_index, a field all data sets possess. Rows can also be sorted in ascending or descending order based on fields in a given data set. The behavior is similar to an ORDER BY clause in SQL.
-This must be applied on each field returned through the 'AddSort()'.
-
-Example:
-
-    parameters.AddSort("dosage_form", DLSortType.Ascending);    // dosage form is sorted in ascending order
-    parameters.AddSort("product_type", DLSortType.Descending);  // product_type is sorted in descending order
-
-
+<a name='filtering'/>
 #### Filtering
 
 Filtering is by far the most powerful method of definig what type of data will be returned. It can also be the most complex.
