@@ -107,8 +107,9 @@ connection.read(dataSetName, params, function(err, req, res, data)) {
 <a name='filtering'/>
 #### Filtering
 
-Filters allow you to specify which rows are returned. Simple filters consist of a field, operator, and value. 
-Complex filters can be created by using AND and OR. It is similar to a WHERE clause in SQL.
+Filters allow you to only return rows which meet a specified criteria. Simple filters consist of 
+a field, operator, and value. Complex filters can be created by combining multiple filters using 
+the AND and OR operators. It is similar to a WHERE clause in SQL.
 
 ```js
 // simple filter
