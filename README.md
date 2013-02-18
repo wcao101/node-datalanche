@@ -73,7 +73,7 @@ in SQL.
 
 #### Parameters
 
-* `fields` An array of fields to return. `default = all fields`
+* `fields` An array of fields to return. `default = all`
 * `filter` A filter which defines which rows are returned. See [Filtering](#filtering) for details.
 * `limit` The number of rows to return. `default = 25, min = 1, max = 100`
 * `skip` The number of rows to skip. `default = 0`
@@ -107,19 +107,44 @@ connection.read(dataSetName, params, function(err, req, res, data)) {
 <a name='filtering'/>
 #### Filtering
 
-Filtering is by far the most powerful method of definig what type of data will be returned. It can also be the most complex.
+Filters allow you to specify which rows are returned. Simple filters consist of a field, operator, and value. 
+Complex filters can be created by using AND and OR. It is similar to a WHERE clause in SQL.
 
-##### Simple Example:
+```js
+// simple filter
+// dosage_form = 'capsule'
+var simpleFilter = dlanche.createFilter('dosage_form', dlanche.FilterOp.EQ, 'capsule');
 
-    DLFilter filter = new DLFilter("dosage_form", DLFilterOp.EQ, "capsule");
-    
-##### Complex Filter:
+// complex filter
+// (dosage_form = 'capsule' OR dosage_form = 'tablet') AND product_type.contains('esc')
+var complexFilter = dlanche.createFilter(
+    dlanche.createFilter(
+        dlanche.createFilter('dosage_form', dlanche.FilterOp.EQ, 'capsule'),
+        dlanche.FilterOp.OR,
+        dlanche.createFilter('dosage_form', dlanche.FilterOp.EQ, 'tablet')
+    ),
+    dlanche.FilterOp.AND,
+    dlanche.createFilter('product_type', dlanche.FilterOp.CONTAINS, 'esc')
+);
+```
 
-    DLFilter filter = new DLFilter(
-      new DLFilter(
-          new DLFilter("dosage_form", DLFilterOp.EQ, "capsule"),
-          DLFilterOp.OR,
-          new DLFilter("dosage_form", DLFilterOp.EQ, "tablet")
-          ),
-      DLFilterOp.AND,
-      new DLFilter("product_type", DLFilterOp.CONTAINS, "esc"));
+**dlanche.FilterOps**
+
+| Operators    | Description             | Data Types     |
+|:------------ |:----------------------- |:-------------- |
+| AND          | logical AND             | filter objects |
+| OR           | logical OR              | filter objects |
+| EQ           | equals                  | numeric, text  |
+| NOT_EQ       | not equals              | numeric, text  |
+| IN           | equals any in array     | numeric, text  |
+| NOT_IN       | not equals any in array | numeric, text  |
+| GT           | greater than            | numeric        |
+| GTE          | greater than or equal   | numeric        |
+| LT           | less than               | numeric        |
+| LTE          | less than or equal      | numeric        |
+| EW           | ends with               | text           |
+| NOT_EW       | not ends with           | text           |
+| SW           | starts with             | text           |
+| NOT_SW       | not starts with         | text           |
+| CONTAINS     | contains                | text           |
+| NOT_CONTAINS | not contains            | text           |
