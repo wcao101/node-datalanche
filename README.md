@@ -19,13 +19,13 @@ Create a connection object then call `authenticate()` using your account's API k
 ```js
 var dlanche = require('datalanche');
 
-var API_KEY = 'your_api_key';
-var API_SECRET = ''; // leave empty, needed when OAuth supported
+var key = 'your_api_key';
+var secret = ''; // leave empty, needed when OAuth supported
 
 var connection = dlanche.createConnection();
 
 // only need to authenticate once for a given connection
-connection.authenticate(API_KEY, API_SECRET, function(err) {
+connection.authenticate(key, secret, function(err) {
     if (err) {
         return console.log(err);
     }
