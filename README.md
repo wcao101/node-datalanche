@@ -93,8 +93,8 @@ var params = {
     limit: 5,
     skip: 0,
     sort: [
-        { field: 'dosage_form', type: dlanche.OrderType.ASC },
-        { field: 'product_type', type: dlanche.OrderType.DESC }
+        { field: 'dosage_form', type: dlanche.SortType.ASC },
+        { field: 'product_type', type: dlanche.SortType.DESC }
     ],
     total: false
 };
@@ -129,7 +129,7 @@ var complexFilter = dlanche.createFilter(
 );
 ```
 
-**dlanche.FilterOps**
+**dlanche.FilterOp**
 
 | Operators    | Description             | Data Types     |
 |:------------ |:----------------------- |:-------------- |
