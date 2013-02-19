@@ -62,7 +62,9 @@ function handleResult(startTime, test, err, req, res, data, callback) {
     var dataDiff = jdiff.diff(test.expected.data, actual.data);
     if (!dataDiff) {
         dataDiff = '';
-    } else {
+    }
+
+    if (result === 'FAIL') {
         console.log(JSON.stringify(actual.data, null, '    '));
     }
 
@@ -157,13 +159,18 @@ nconf.env().argv();
 
 var rootDir = nconf.get('testdir');
 var validKey = nconf.get('key');
+var testFile = nconf.get('testfile') || '';
+
+if (testFile === '') {
+    testFile = '.json'
+}
 
 // load tests
 var tests = [];
 var testFiles = fs.readdirSync(rootDir);
 
 for (var i = 0; i < testFiles.length; i++) {
-    if (testFiles[i].endsWith('.json') === true) {
+    if (testFiles[i].endsWith(testFile) === true) {
         var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles[i], 'utf8'));
         for (var j = 0; j < json.tests.length; j++) {
             var test = json.tests[j];
@@ -188,5 +195,6 @@ async.forEachSeries(tests, execute, function(err) {
         console.log('failed: ' + (tests.length - numPassed).toString());
         console.log('total:  ' + tests.length.toString());
     }
+    process.exit();
 });
 
