@@ -54,7 +54,7 @@ connection.getList(function(err, req, res, list)) {
     * `url` A URL to the license (optional).
 * `fields` A list of fields each with the following attributes:
     * `name` The name of the field.
-    * `data_type` The field's type: `boolean, string, int16, int32, int64, float, double`.
+    * `data_type` The field's type: `boolean, int16, int32, int64, float, double, string, uuid`.
     * `description` The field's description.
 
 ```js
@@ -131,21 +131,21 @@ var complexFilter = dlanche.createFilter(
 
 **dlanche.FilterOp**
 
-| Operators    | Description             | Data Types     |
-|:------------ |:----------------------- |:-------------- |
-| AND          | logical AND             | filter objects |
-| OR           | logical OR              | filter objects |
-| EQ           | equals                  | numeric, text  |
-| NOT_EQ       | not equals              | numeric, text  |
-| IN           | equals any in array     | numeric, text  |
-| NOT_IN       | not equals any in array | numeric, text  |
-| GT           | greater than            | numeric        |
-| GTE          | greater than or equal   | numeric        |
-| LT           | less than               | numeric        |
-| LTE          | less than or equal      | numeric        |
-| EW           | ends with               | text           |
-| NOT_EW       | not ends with           | text           |
-| SW           | starts with             | text           |
-| NOT_SW       | not starts with         | text           |
-| CONTAINS     | contains                | text           |
-| NOT_CONTAINS | not contains            | text           |
+| Operators    | Description             | Data Types          |
+|:------------ |:----------------------- |:------------------- |
+| AND          | logical AND             | filter objects      |
+| OR           | logical OR              | filter objects      |
+| EQ           | equals                  | numeric, text, uuid |
+| NOT_EQ       | not equals              | numeric, text, uuid |
+| IN           | equals any in array     | numeric, text, uuid |
+| NOT_IN       | not equals any in array | numeric, text, uuid |
+| GT           | greater than            | numeric             |
+| GTE          | greater than or equal   | numeric             |
+| LT           | less than               | numeric             |
+| LTE          | less than or equal      | numeric             |
+| EW           | ends with               | text                |
+| NOT_EW       | not ends with           | text                |
+| SW           | starts with             | text                |
+| NOT_SW       | not starts with         | text                |
+| CONTAINS     | contains                | text                |
+| NOT_CONTAINS | not contains            | text                |
