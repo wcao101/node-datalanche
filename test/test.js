@@ -2,7 +2,6 @@ var async = require('async');
 var dlanche = require('../lib');
 var fs = require('fs');
 var nconf = require('nconf');
-var jdiff = require('jsondiffpatch');
 
 //
 // String extensions
@@ -51,20 +50,7 @@ function handleResult(startTime, test, err, req, res, data, callback) {
     if (JSON.stringify(test.expected) === JSON.stringify(actual)) {
         result = 'PASS';
         numPassed++;
-    }
-
-    // only print difference between data with format:
-    //
-    // "property":["expected_value","actual_value"], // modified
-    // "property":["actual_value"],                  // added
-    // "property":["expected_value",0,0]             // deleted
-
-    var dataDiff = jdiff.diff(test.expected.data, actual.data);
-    if (!dataDiff) {
-        dataDiff = '';
-    }
-
-    if (result === 'FAIL') {
+    } else {
         console.log(JSON.stringify(actual.data, null, '    '));
     }
 
@@ -75,7 +61,6 @@ function handleResult(startTime, test, err, req, res, data, callback) {
         name: test.name,
         expected: test.expected,
         actual: actual,
-        dataDiff: dataDiff,
         time: time,
         result: result,
     }));
@@ -160,6 +145,8 @@ nconf.env().argv();
 var rootDir = nconf.get('testdir');
 var validKey = nconf.get('key');
 var testFile = nconf.get('testfile') || '';
+var host = nconf.get('host') || null;
+var port = nconf.get('port') || null;
 
 if (testFile === '') {
     testFile = '.json'
@@ -183,7 +170,7 @@ for (var i = 0; i < testFiles.length; i++) {
 }
 
 // create connection
-connection = dlanche.createConnection();
+connection = dlanche.createConnection({ host: host, port: port });
 
 // loop through tests and execute them
 async.forEachSeries(tests, execute, function(err) {
