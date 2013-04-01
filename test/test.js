@@ -96,7 +96,7 @@ function getSchema(test, callback) {
         }
 
         var time = process.hrtime();
-        connection.getSchema(test.dataset, function(err, req, res, data) {
+        connection.getSchema(test.parameters.dataset, function(err, req, res, data) {
             handleResult(time, test, err, req, res, data, callback);
         });
     });
@@ -117,7 +117,7 @@ function read(test, callback) {
         delete test.parameters.secret;
 
         var time = process.hrtime();
-        connection.read(test.dataset, test.parameters, function(err, req, res, data) {
+        connection.read(test.parameters, function(err, req, res, data) {
             handleResult(time, test, err, req, res, data, callback);
         });
     });

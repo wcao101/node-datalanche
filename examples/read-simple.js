@@ -4,8 +4,9 @@ var API_KEY = '';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
 var DATA_SET = 'medical_codes_ndc';
 
+// Use default read parameters. Only "dataset" is a required parameter.
 var readParams = {
-    // leave empty to use default read parameters
+    dataset: DATA_SET,
 };
 
 var connection = dlanche.createConnection();
@@ -18,7 +19,7 @@ connection.authenticate(API_KEY, API_SECRET, function(err) {
         return;
     }
 
-    connection.read(DATA_SET, readParams, function(err, request, response, data) {
+    connection.read(readParams, function(err, request, response, data) {
 
         if (err) {
             console.log(JSON.stringify(err, null, '  '));

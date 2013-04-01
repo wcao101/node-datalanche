@@ -9,6 +9,7 @@ var DATA_SET = 'medical_codes_ndc';
 var myFilter = dlanche.createFilter('dosage_form', dlanche.FilterOp.EQ, 'capsule');
 
 var readParams = {
+    dataset: DATA_SET,
     filter: myFilter,
     limit: 5
 };
@@ -23,7 +24,7 @@ connection.authenticate(API_KEY, API_SECRET, function(err) {
         return;
     }
 
-    connection.read(DATA_SET, readParams, function(err, request, response, data) {
+    connection.read(readParams, function(err, request, response, data) {
 
         if (err) {
             console.log(JSON.stringify(err, null, '  '));

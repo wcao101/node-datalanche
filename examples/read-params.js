@@ -5,6 +5,7 @@ var API_SECRET = ''; // Leave blank until OAuth supported.
 var DATA_SET = 'medical_codes_ndc';
 
 var readParams = {
+    dataset: DATA_SET,
     fields: [
         'dosage_form',
         'route',
@@ -30,7 +31,7 @@ connection.authenticate(API_KEY, API_SECRET, function(err) {
         return;
     }
 
-    connection.read(DATA_SET, readParams, function(err, request, response, data) {
+    connection.read(readParams, function(err, request, response, data) {
 
         if (err) {
             console.log(JSON.stringify(err, null, '  '));
