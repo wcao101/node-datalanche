@@ -2,14 +2,14 @@ var dlanche = require('../lib');
 
 var API_KEY = '';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
-var DATA_SET = 'medical_codes_ndc';
 
 // creates a simple filter
 // only return rows where dosage_form = 'capsule'
-var myFilter = dlanche.createFilter('dosage_form', dlanche.FilterOp.EQ, 'capsule');
+var myFilter = dlanche.createFilter();
+myFilter.field('dosage_form').notEquals('capsule');
 
 var readParams = {
-    dataset: DATA_SET,
+    dataset: 'medical_codes_ndc',
     filter: myFilter,
     limit: 5
 };

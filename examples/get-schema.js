@@ -2,7 +2,6 @@ var dlanche = require('../lib');
 
 var API_KEY = '';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
-var DATA_SET = 'medical_codes_ndc';
 
 var connection = dlanche.createConnection();
 
@@ -14,7 +13,7 @@ connection.authenticate(API_KEY, API_SECRET, function(err) {
         return;
     }
 
-    connection.getSchema(DATA_SET, function(err, request, response, schema) {
+    connection.getSchema('medical_codes_ndc', function(err, request, response, schema) {
 
         if (err) {
             console.log(JSON.stringify(err, null, '  '));

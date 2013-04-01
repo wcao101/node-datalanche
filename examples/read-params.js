@@ -2,10 +2,9 @@ var dlanche = require('../lib');
 
 var API_KEY = '';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
-var DATA_SET = 'medical_codes_ndc';
 
 var readParams = {
-    dataset: DATA_SET,
+    dataset: 'medical_codes_ndc',
     fields: [
         'dosage_form',
         'route',

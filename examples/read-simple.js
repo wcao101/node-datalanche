@@ -2,11 +2,10 @@ var dlanche = require('../lib');
 
 var API_KEY = '';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
-var DATA_SET = 'medical_codes_ndc';
 
 // Use default read parameters. Only "dataset" is a required parameter.
 var readParams = {
-    dataset: DATA_SET,
+    dataset: 'medical_codes_ndc',
 };
 
 var connection = dlanche.createConnection();
