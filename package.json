@@ -25,7 +25,6 @@
         "node": ">=0.8"
     },
     "dependencies": {
-        "enum": "0.2.3",
         "restify": "2.2.1"
     },
     "devDependencies": {

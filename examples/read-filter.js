@@ -8,11 +8,10 @@ var API_SECRET = ''; // Leave blank until OAuth supported.
 var myFilter = dlanche.createFilter();
 myFilter.field('dosage_form').notEquals('capsule');
 
-var readParams = {
-    dataset: 'medical_codes_ndc',
-    filter: myFilter,
-    limit: 5
-};
+var readParams = dlanche.createReadParams();
+readParams.dataset = 'medical_codes_ndc';
+readParams.filter = myFilter;
+readParams.limit = 5;
 
 var connection = dlanche.createConnection();
 

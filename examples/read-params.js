@@ -1,26 +1,23 @@
 var dlanche = require('../lib');
 
-var API_KEY = '';    // Add your API key.
+var API_KEY = '16YNL0N2QVS9kx2y07MgcA==';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
 
-var readParams = {
-    dataset: 'medical_codes_ndc',
-    fields: [
-        'dosage_form',
-        'route',
-        'product_type'
-    ],
-    filter: null, // look at read-filter.js or read-complex-filter.js
-    limit: 5,
-    skip: 0,
-    sort: [
-        { field: 'dosage_form', type: dlanche.SortType.ASC },
-        { field: 'product_type', type: dlanche.SortType.DESC }
-    ],
-    total: false
-};
+var readParams = dlanche.createReadParams();
+readParams.dataset = 'medical_codes_ndc';
+readParams.fields = [ 'dosage_form', 'route', 'product_type' ];
+readParams.filter = null; // look at read-filter.js or read-complex-filter.js
+readParams.limit = 5;
+readParams.skip = 0;
+readParams.sort = [ 'dosage_form:$asc', 'product_type:$desc' ];
+readParams.total = false;
 
-var connection = dlanche.createConnection();
+// you can also use helper methods for params.sort
+readParams.sort = null;
+readParams.sortAsc('dosage_form');
+readParams.sortDesc('product_type');
+
+var connection = dlanche.createConnection({host:'localhost',port:4001});
 
 // only need to call authenticate() once on any connection
 connection.authenticate(API_KEY, API_SECRET, function(err) {
