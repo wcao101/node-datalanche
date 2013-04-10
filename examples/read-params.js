@@ -1,6 +1,6 @@
 var dlanche = require('../lib');
 
-var API_KEY = '16YNL0N2QVS9kx2y07MgcA==';    // Add your API key.
+var API_KEY = '';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
 
 var readParams = dlanche.createReadParams();
@@ -17,7 +17,7 @@ readParams.sort = null;
 readParams.sortAsc('dosage_form');
 readParams.sortDesc('product_type');
 
-var connection = dlanche.createConnection({host:'localhost',port:4001});
+var connection = dlanche.createConnection();
 
 // only need to call authenticate() once on any connection
 connection.authenticate(API_KEY, API_SECRET, function(err) {
