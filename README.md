@@ -1,7 +1,7 @@
 node-datalanche
 ===============
 
-Official [Datalanche](https://www.datalanche.com) Node.js client for its REST API.
+Official Node.js client for [Datalanche's](https://www.datalanche.com) REST API.
 
 ## Install
 
