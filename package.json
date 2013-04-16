@@ -22,13 +22,13 @@
         }
     ],
     "engines": {
-        "node": ">=0.8"
+        "node": ">=0.10"
     },
     "dependencies": {
-        "restify": "2.2.1"
+        "restify": "2.4.1"
     },
     "devDependencies": {
-        "async": "0.2.5",
+        "async": "0.2.7",
         "nconf": "0.6.7"
     }
 }

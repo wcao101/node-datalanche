@@ -147,6 +147,18 @@ var validKey = nconf.get('key');
 var testFile = nconf.get('testfile') || '';
 var host = nconf.get('host') || null;
 var port = nconf.get('port') || null;
+var ssl = nconf.get('ssl') || null;
+
+if (ssl) {
+    ssl = ssl.toLowerCase();
+    if (ssl === 'false' || ssl === '0') {
+        ssl = false;
+    } else if (ssl === 'true' || ssl === '1') {
+        ssl = true;
+    } else {
+        ssl = null;
+    }
+}
 
 if (testFile === '') {
     testFile = '.json'
@@ -170,7 +182,7 @@ for (var i = 0; i < testFiles.length; i++) {
 }
 
 // create connection
-connection = dlanche.createConnection({ host: host, port: port });
+connection = dlanche.createConnection({ host: host, port: port, verifySsl: ssl });
 
 // loop through tests and execute them
 async.forEachSeries(tests, execute, function(err) {
