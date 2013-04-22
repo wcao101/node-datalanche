@@ -70,56 +70,38 @@ function handleResult(startTime, test, err, req, res, data, callback) {
 
 function getList(test, callback) {
 
-    client.authenticate(test.parameters.key, test.parameters.secret, function(err) {
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
 
-        if (err) {
-            // something really bad happened
-            callback(err);
-            return;
-        }
-
-        var time = process.hrtime();
-        client.getList(function(err, req, res, data) {
-            handleResult(time, test, err, req, res, data, callback);
-        });
+    var time = process.hrtime();
+    client.getList(function(err, req, res, data) {
+        handleResult(time, test, err, req, res, data, callback);
     });
 }
 
 function getSchema(test, callback) {
 
-    client.authenticate(test.parameters.key, test.parameters.secret, function(err) {
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
 
-        if (err) {
-            // something really bad happened
-            callback(err);
-            return;
-        }
-
-        var time = process.hrtime();
-        client.getSchema(test.parameters.dataset, function(err, req, res, data) {
-            handleResult(time, test, err, req, res, data, callback);
-        });
+    var time = process.hrtime();
+    client.getSchema(test.parameters.dataset, function(err, req, res, data) {
+        handleResult(time, test, err, req, res, data, callback);
     });
 }
 
 function read(test, callback) {
 
-    client.authenticate(test.parameters.key, test.parameters.secret, function(err) {
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
 
-        if (err) {
-            // something really bad happened
-            callback(err);
-            return;
-        }
+    // read() does not care about these, remove them
+    delete test.parameters.key;
+    delete test.parameters.secret;
 
-        // read() does not care about these, remove them
-        delete test.parameters.key;
-        delete test.parameters.secret;
-
-        var time = process.hrtime();
-        client.read(test.parameters, function(err, req, res, data) {
-            handleResult(time, test, err, req, res, data, callback);
-        });
+    var time = process.hrtime();
+    client.read(test.parameters, function(err, req, res, data) {
+        handleResult(time, test, err, req, res, data, callback);
     });
 }
 
