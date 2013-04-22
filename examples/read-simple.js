@@ -7,17 +7,17 @@ var API_SECRET = ''; // Leave blank until OAuth supported.
 var readParams = dlanche.createReadParams();
 readParams.dataset = 'medical_codes_ndc';
 
-var connection = dlanche.createConnection();
+var client = dlanche.createClient();
 
-// only need to call authenticate() once on any connection
-connection.authenticate(API_KEY, API_SECRET, function(err) {
+// only need to call authenticate() once on any client
+client.authenticate(API_KEY, API_SECRET, function(err) {
 
     if (err) {
         console.log(JSON.stringify(err, null, '  '));
         return;
     }
 
-    connection.read(readParams, function(err, request, response, data) {
+    client.read(readParams, function(err, request, response, data) {
 
         if (err) {
             console.log(JSON.stringify(err, null, '  '));

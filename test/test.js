@@ -20,7 +20,7 @@ String.prototype.endsWith = function(suffix) {
 //
 
 var numPassed = 0;
-var connection = null;
+var client = null;
 
 //
 // functions
@@ -70,7 +70,7 @@ function handleResult(startTime, test, err, req, res, data, callback) {
 
 function getList(test, callback) {
 
-    connection.authenticate(test.parameters.key, test.parameters.secret, function(err) {
+    client.authenticate(test.parameters.key, test.parameters.secret, function(err) {
 
         if (err) {
             // something really bad happened
@@ -79,7 +79,7 @@ function getList(test, callback) {
         }
 
         var time = process.hrtime();
-        connection.getList(function(err, req, res, data) {
+        client.getList(function(err, req, res, data) {
             handleResult(time, test, err, req, res, data, callback);
         });
     });
@@ -87,7 +87,7 @@ function getList(test, callback) {
 
 function getSchema(test, callback) {
 
-    connection.authenticate(test.parameters.key, test.parameters.secret, function(err) {
+    client.authenticate(test.parameters.key, test.parameters.secret, function(err) {
 
         if (err) {
             // something really bad happened
@@ -96,7 +96,7 @@ function getSchema(test, callback) {
         }
 
         var time = process.hrtime();
-        connection.getSchema(test.parameters.dataset, function(err, req, res, data) {
+        client.getSchema(test.parameters.dataset, function(err, req, res, data) {
             handleResult(time, test, err, req, res, data, callback);
         });
     });
@@ -104,7 +104,7 @@ function getSchema(test, callback) {
 
 function read(test, callback) {
 
-    connection.authenticate(test.parameters.key, test.parameters.secret, function(err) {
+    client.authenticate(test.parameters.key, test.parameters.secret, function(err) {
 
         if (err) {
             // something really bad happened
@@ -117,7 +117,7 @@ function read(test, callback) {
         delete test.parameters.secret;
 
         var time = process.hrtime();
-        connection.read(test.parameters, function(err, req, res, data) {
+        client.read(test.parameters, function(err, req, res, data) {
             handleResult(time, test, err, req, res, data, callback);
         });
     });
@@ -181,8 +181,8 @@ for (var i = 0; i < testFiles.length; i++) {
     }
 }
 
-// create connection
-connection = dlanche.createConnection({ host: host, port: port, verifySsl: ssl });
+// create client
+client = dlanche.createClient({ host: host, port: port, verifySsl: ssl });
 
 // loop through tests and execute them
 async.forEachSeries(tests, execute, function(err) {

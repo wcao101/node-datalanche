@@ -3,17 +3,17 @@ var dlanche = require('../lib');
 var API_KEY = '';    // Add your API key.
 var API_SECRET = ''; // Leave blank until OAuth supported.
 
-var connection = dlanche.createConnection();
+var client = dlanche.createClient();
 
-// only need to call authenticate() once on any connection
-connection.authenticate(API_KEY, API_SECRET, function(err) {
+// only need to call authenticate() once on any client
+client.authenticate(API_KEY, API_SECRET, function(err) {
 
     if (err) {
         console.log(JSON.stringify(err, null, '  '));
         return;
     }
 
-    connection.getList(function(err, request, response, list) {
+    client.getList(function(err, request, response, list) {
 
         if (err) {
             console.log(JSON.stringify(err, null, '  '));
