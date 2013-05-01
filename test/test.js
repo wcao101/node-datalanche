@@ -125,7 +125,8 @@ nconf.use('memory');
 nconf.env().argv();
 
 var rootDir = nconf.get('testdir');
-var validKey = nconf.get('key');
+var validKey = nconf.get('key') || '';
+var validSecret = nconf.get('secret') || '';
 var testFile = nconf.get('testfile') || '';
 var host = nconf.get('host') || null;
 var port = nconf.get('port') || null;
@@ -157,6 +158,9 @@ for (var i = 0; i < testFiles.length; i++) {
             var test = json.tests[j];
             if (test.parameters.key === 'valid_key') {
                 test.parameters.key = validKey;
+            }
+            if (test.parameters.secret === 'valid_secret') {
+                test.parameters.secret = validSecret;
             }
             tests.push(json.tests[j]);
         }
