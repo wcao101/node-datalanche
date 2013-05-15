@@ -68,13 +68,13 @@ function handleResult(startTime, test, err, req, res, data, callback) {
     callback(null);
 }
 
-function getList(test, callback) {
+function getDatasetList(test, callback) {
 
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.getList(function(err, req, res, data) {
+    client.getDatasetList(function(err, req, res, data) {
         handleResult(time, test, err, req, res, data, callback);
     });
 }
@@ -108,7 +108,7 @@ function read(test, callback) {
 function execute(test, callback) {
 
     if (test.method === 'list') {
-        getList(test, callback);
+        getDatasetList(test, callback);
     } else if (test.method === 'schema') {
         getSchema(test, callback);
     } else if (test.method === 'read') {
