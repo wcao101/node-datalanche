@@ -26,7 +26,7 @@ var client = null;
 // functions
 //
 
-function handleResult(startTime, test, err, req, res, data, callback) {
+function handleResult(startTime, test, err, data, callback) {
     var diffTime = process.hrtime(startTime);
     diffTime = (diffTime[0] * 1e9 + diffTime[1]) / 1e6;
 
@@ -43,7 +43,7 @@ function handleResult(startTime, test, err, req, res, data, callback) {
         actual.exception = err.body.code;
         actual.data = err.body.message;
     } else {
-        actual.statusCode = res.statusCode;
+        actual.statusCode = 200;
         actual.data = data;
     }
 
@@ -74,8 +74,8 @@ function getDatasetList(test, callback) {
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.getDatasetList(function(err, req, res, data) {
-        handleResult(time, test, err, req, res, data, callback);
+    client.getDatasetList(function(err, data) {
+        handleResult(time, test, err, data, callback);
     });
 }
 
@@ -85,23 +85,28 @@ function getSchema(test, callback) {
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.getSchema(test.parameters.dataset, function(err, req, res, data) {
-        handleResult(time, test, err, req, res, data, callback);
+    client.getSchema(test.parameters.dataset, function(err, data) {
+
+        // delete date/time properties since they probably different than test data
+        delete data.when_created;
+        delete data.last_updated;
+
+        handleResult(time, test, err, data, callback);
     });
 }
 
-function read(test, callback) {
+function readRecords(test, callback) {
 
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
-    // read() does not care about these, remove them
+    // readRecords() does not care about these, remove them
     delete test.parameters.key;
     delete test.parameters.secret;
 
     var time = process.hrtime();
-    client.read(test.parameters, function(err, req, res, data) {
-        handleResult(time, test, err, req, res, data, callback);
+    client.readRecords(test.parameters, function(err, data) {
+        handleResult(time, test, err, data, callback);
     });
 }
 
@@ -112,7 +117,7 @@ function execute(test, callback) {
     } else if (test.method === 'schema') {
         getSchema(test, callback);
     } else if (test.method === 'read') {
-        read(test, callback);
+        readRecords(test, callback);
     } else {
         callback(new Error(test.method + ' method not found'));
     }

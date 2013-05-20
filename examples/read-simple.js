@@ -1,20 +1,24 @@
 var dlanche = require('../lib');
 
 var client = dlanche.createClient({
-    key: '',    // Add your API key.
-    secret: ''  // Add your API secret.
+    key: '7zNN1Pl9SQ6lNZwYe9mtQw==',    // Add your API key.
+    secret: 'VCBA1hLyS2mYdrL6kO/iKQ==',  // Add your API secret.
+    host: 'localhost',
+    port: 4001,
+    verifySsl: false,
 });
 
 // Use default read parameters. Only "dataset" is a required parameter.
 var readParams = dlanche.createReadParams();
-readParams.dataset = 'medical_codes_ndc';
+readParams.dataset = 'test_dataset';
 
-client.read(readParams, function(err, request, response, data) {
+client.readRecords(readParams, function(err, records) {
 
     if (err) {
-        console.log(JSON.stringify(err, null, '  '));
-        return;
+        console.log(err);
+    } else {
+        console.log(JSON.stringify(records));
     }
 
-    console.log(JSON.stringify(data, null, '  '));
+    return client.close();
 });

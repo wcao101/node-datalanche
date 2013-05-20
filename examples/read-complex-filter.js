@@ -21,12 +21,13 @@ readParams.dataset = 'medical_codes_ndc';
 readParams.filter = myFilter;
 readParams.limit = 5;
 
-client.read(readParams, function(err, request, response, data) {
+client.readRecords(readParams, function(err, records) {
 
     if (err) {
-        console.log(JSON.stringify(err, null, '  '));
-        return;
+        console.log(err);
+    } else {
+        console.log(JSON.stringify(records));
     }
 
-    console.log(JSON.stringify(data, null, '  '));
+    return client.close();
 });

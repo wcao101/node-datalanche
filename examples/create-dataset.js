@@ -10,14 +10,31 @@ var client = dlanche.createClient({
 
 var schema = {
     name: 'test_dataset',
+    fields: [
+        {
+            name: 'column1',
+            data_type: 'string',
+            is_primary: true,
+        },
+        {
+            name: 'column2',
+            data_type: 'int32',
+            is_primary: true,
+        },
+        {
+            name: 'column3',
+            data_type: 'timestamp',
+        },
+    ],
 };
 
-client.createDataset(schema, function(err, request, response, list) {
+client.createDataset(schema, function(err) {
 
     if (err) {
-        console.log(JSON.stringify(err, null, '  '));
-        return;
+        console.log(err);
+    } else {
+        console.log('dataset created');
     }
 
-    console.log(JSON.stringify(list, null, '  '));
+    return client.close();
 });

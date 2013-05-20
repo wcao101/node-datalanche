@@ -1,16 +1,20 @@
 var dlanche = require('../lib');
 
 var client = dlanche.createClient({
-    key: '',    // Add your API key.
-    secret: ''  // Add your API secret.
+    key: '7zNN1Pl9SQ6lNZwYe9mtQw==',    // Add your API key.
+    secret: 'VCBA1hLyS2mYdrL6kO/iKQ==',  // Add your API secret.
+    host: 'localhost',
+    port: 4001,
+    verifySsl: false,
 });
 
-client.getSchema('medical_codes_ndc', function(err, request, response, schema) {
+client.getSchema('test_dataset', function(err, schema) {
 
     if (err) {
-        console.log(JSON.stringify(err, null, '  '));
-        return;
+        console.log(err);
+    } else {
+        console.log(JSON.stringify(schema));
     }
 
-    console.log(JSON.stringify(schema, null, '  '));
+    return client.close();
 });

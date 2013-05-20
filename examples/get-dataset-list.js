@@ -8,12 +8,13 @@ var client = dlanche.createClient({
     verifySsl: false,
 });
 
-client.getDatasetList(function(err, request, response, list) {
+client.getDatasetList(function(err, list) {
 
     if (err) {
-        console.log(JSON.stringify(err, null, '  '));
-        return;
+        console.log(err);
+    } else {
+        console.log(JSON.stringify(list));
     }
 
-    console.log(JSON.stringify(list, null, '  '));
+    return client.close();
 });

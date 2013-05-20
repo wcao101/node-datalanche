@@ -8,12 +8,14 @@ var client = dlanche.createClient({
     verifySsl: false,
 });
 
-client.deleteDataset('test_dataset', function(err) {
+var fieldNames = [ 'column1' ];
+
+client.removeFields('test_dataset', fieldNames, function(err) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log('dataset deleted');
+        console.log('schema fields removed');
     }
 
     return client.close();

@@ -8,12 +8,20 @@ var client = dlanche.createClient({
     verifySsl: false,
 });
 
-client.deleteDataset('test_dataset', function(err) {
+var newFields = [
+    {
+        name: 'column1',
+        data_type: 'int64',
+        description: 'hello world',
+    },
+];
+
+client.addFields('test_dataset', newFields, function(err) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log('dataset deleted');
+        console.log('schema fields added');
     }
 
     return client.close();
