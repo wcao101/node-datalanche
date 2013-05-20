@@ -65,7 +65,7 @@ function handleResult(startTime, test, err, data, callback) {
         result: result,
     }));
 
-    callback(null);
+    return callback(null);
 }
 
 function getDatasetList(test, callback) {
@@ -74,8 +74,34 @@ function getDatasetList(test, callback) {
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.getDatasetList(function(err, data) {
-        handleResult(time, test, err, data, callback);
+    client.getDatasetList(function(err, list) {
+
+        // getDatasetList() test is a bit different than the rest
+        // because a server can have any number of datasets. We test
+        // that the expected dataset(s) is listed rather than
+        // checking the entire result is valid, but only if a valid
+        // response is expected.
+
+        if (test.expected.statusCode === 200) {
+
+            var datasets = [];
+            
+            for (var i = 0; i < list.num_datasets; i++) {
+                var dataset = list.datasets[i];
+
+                for (var j = 0; j < test.expected.data.num_datasets; j++) {
+                    if (JSON.stringify(dataset) === JSON.stringify(test.expected.data.datasets[j])) {
+                        datasets.push(dataset);
+                        break;
+                    }
+                }
+            }
+
+            list.num_datasets = datasets.length;
+            list.datasets = datasets;
+        }
+
+        return handleResult(time, test, err, list, callback);
     });
 }
 
@@ -87,11 +113,13 @@ function getSchema(test, callback) {
     var time = process.hrtime();
     client.getSchema(test.parameters.dataset, function(err, data) {
 
-        // delete date/time properties since they probably different than test data
+        // Delete date/time properties since they are probably
+        // different than the test data. This is okay because
+        // the server sets these values on write operations.
         delete data.when_created;
         delete data.last_updated;
 
-        handleResult(time, test, err, data, callback);
+        return handleResult(time, test, err, data, callback);
     });
 }
 
@@ -106,21 +134,25 @@ function readRecords(test, callback) {
 
     var time = process.hrtime();
     client.readRecords(test.parameters, function(err, data) {
-        handleResult(time, test, err, data, callback);
+        return handleResult(time, test, err, data, callback);
     });
 }
 
 function execute(test, callback) {
 
-    if (test.method === 'list') {
-        getDatasetList(test, callback);
-    } else if (test.method === 'schema') {
-        getSchema(test, callback);
-    } else if (test.method === 'read') {
-        readRecords(test, callback);
-    } else {
-        callback(new Error(test.method + ' method not found'));
+    if (test.method === 'get_dataset_list') {
+        return getDatasetList(test, callback);
     }
+
+    if (test.method === 'get_schema') {
+        return getSchema(test, callback);
+    }
+
+    if (test.method === 'read') {
+        return readRecords(test, callback);
+    }
+
+    return callback(new Error(test.method + ' method not found'));
 }
 
 // load arguments
@@ -185,6 +217,6 @@ async.forEachSeries(tests, execute, function(err) {
         console.log('failed: ' + (tests.length - numPassed).toString());
         console.log('total:  ' + tests.length.toString());
     }
-    process.exit();
+    return client.close();
 });
 
