@@ -52,7 +52,7 @@ function handleResult(startTime, test, err, data, callback) {
         exception: '',
         data: '',
     };
-    
+
     if (err) {
         actual.statusCode = err.statusCode;
         actual.exception = err.body.code;
@@ -81,6 +81,28 @@ function handleResult(startTime, test, err, data, callback) {
     }));
 
     return callback(null);
+}
+
+function createDataset(test, callback) {
+
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
+
+    var time = process.hrtime();
+    client.createDataset(test.body, function(err) {
+        return handleResult(time, test, err, null, callback);
+    });
+}
+
+function deleteDataset(test, callback) {
+
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
+
+    var time = process.hrtime();
+    client.deleteDataset(test.parameters.dataset, function(err) {
+        return handleResult(time, test, err, null, callback);
+    });
 }
 
 function getDatasetList(test, callback) {
@@ -155,6 +177,14 @@ function readRecords(test, callback) {
 
 function execute(test, callback) {
 
+    if (test.method === 'create_dataset') {
+        return createDataset(test, callback);
+    }
+
+    if (test.method === 'delete_dataset') {
+        return deleteDataset(test, callback);
+    }
+
     if (test.method === 'get_dataset_list') {
         return getDatasetList(test, callback);
     }
@@ -210,18 +240,28 @@ if (testFile === '') {
 }
 
 // create client
-client = dlanche.createClient({ host: host, port: port, verifySsl: ssl });
-
-// loop through tests and execute them
-async.forEachSeries(tests, execute, function(err) {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log('-------------------------------');
-        console.log('passed: ' + numPassed.toString());
-        console.log('failed: ' + (tests.length - numPassed).toString());
-        console.log('total:  ' + tests.length.toString());
-    }
-    return client.close();
+client = dlanche.createClient({
+    key: validKey,
+    secret: validSecret,
+    host: host,
+    port: port,
+    verifySsl: ssl,
 });
 
+// make sure dataset is deleted before running test
+client.deleteDataset("test_dataset", function(err) {
+    // ignore error
+
+    // loop through tests and execute them
+    async.forEachSeries(tests, execute, function(err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('-------------------------------');
+            console.log('passed: ' + numPassed.toString());
+            console.log('failed: ' + (tests.length - numPassed).toString());
+            console.log('total:  ' + tests.length.toString());
+        }
+        return client.close();
+    });
+});
