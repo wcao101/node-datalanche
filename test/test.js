@@ -26,6 +26,21 @@ var client = null;
 // functions
 //
 
+function addTests(tests, json) {
+    for (var j = 0; j < json.tests.length; j++) {
+        var test = json.tests[j];
+        if (test.parameters.key === 'valid_key') {
+            test.parameters.key = validKey;
+        }
+        if (test.parameters.secret === 'valid_secret') {
+            test.parameters.secret = validSecret;
+        }
+        tests.push(json.tests[j]);
+    }
+
+    return tests;
+}
+
 function handleResult(startTime, test, err, data, callback) {
     var diffTime = process.hrtime(startTime);
     diffTime = (diffTime[0] * 1e9 + diffTime[1]) / 1e6;
@@ -171,37 +186,27 @@ var ssl = nconf.get('ssl') || null;
 
 if (ssl) {
     ssl = ssl.toLowerCase();
-    if (ssl === 'false' || ssl === '0') {
+    if (ssl === 'false' || ssl === 0) {
         ssl = false;
-    } else if (ssl === 'true' || ssl === '1') {
+    } else if (ssl === 'true' || ssl === 1) {
         ssl = true;
     } else {
         ssl = null;
     }
 }
 
-if (testFile === '') {
-    testFile = '.json'
-}
-
 // load tests
 var tests = [];
-var testFiles = fs.readdirSync(rootDir);
 
-for (var i = 0; i < testFiles.length; i++) {
-    if (testFiles[i].endsWith(testFile) === true) {
-        var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles[i], 'utf8'));
-        for (var j = 0; j < json.tests.length; j++) {
-            var test = json.tests[j];
-            if (test.parameters.key === 'valid_key') {
-                test.parameters.key = validKey;
-            }
-            if (test.parameters.secret === 'valid_secret') {
-                test.parameters.secret = validSecret;
-            }
-            tests.push(json.tests[j]);
-        }
+if (testFile === '') {
+    var testFiles = JSON.parse(fs.readFileSync(rootDir + '/test-list.json', 'utf8'));
+    for (var i = 0; i < testFiles.tests.length; i++) {
+        var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles.tests[i], 'utf8'));
+        tests = addTests(tests, json);
     }
+} else {
+    var json = JSON.parse(fs.readFileSync(testFile, 'utf8'));
+    tests = addTests(tests, json);
 }
 
 // create client
