@@ -353,7 +353,7 @@ if (ssl) {
 var tests = [];
 
 if (testFile === '') {
-    var testFiles = JSON.parse(fs.readFileSync(rootDir + '/test-list.json', 'utf8'));
+    var testFiles = JSON.parse(fs.readFileSync(rootDir + '/test-suites.json', 'utf8'));
     for (var i = 0; i < testFiles.suites[suite].length; i++) {
         var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles.suites[suite][i], 'utf8'));
         tests = addTests(tests, json);
