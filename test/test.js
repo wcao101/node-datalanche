@@ -241,6 +241,17 @@ function readRecords(test, callback) {
     });
 }
 
+function updateRecords(test, callback) {
+
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
+
+    var time = process.hrtime();
+    client.updateRecords(test.parameters.dataset, test.body, test.parameters.filter, function(err) {
+        return handleResult(time, test, err, null, callback);
+    });
+}
+
 function execute(test, callback) {
 
     if (test.method === 'create_dataset') {
@@ -269,6 +280,10 @@ function execute(test, callback) {
 
     if (test.method === 'read_records') {
         return readRecords(test, callback);
+    }
+
+    if (test.method === 'update_records') {
+        return updateRecords(test, callback);
     }
 
     return callback(new Error(test.method + ' method not found'));
@@ -304,8 +319,8 @@ var tests = [];
 
 if (testFile === '') {
     var testFiles = JSON.parse(fs.readFileSync(rootDir + '/test-list.json', 'utf8'));
-    for (var i = 0; i < testFiles.tests.length; i++) {
-        var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles.tests[i], 'utf8'));
+    for (var i = 0; i < testFiles.suites.all.length; i++) {
+        var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles.suites.all[i], 'utf8'));
         tests = addTests(tests, json);
     }
 } else {
