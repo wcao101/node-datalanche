@@ -302,6 +302,7 @@ var testFile = nconf.get('testfile') || '';
 var host = nconf.get('host') || null;
 var port = nconf.get('port') || null;
 var ssl = nconf.get('ssl') || null;
+var suite = nconf.get('suite') || 'all';
 
 if (ssl) {
     ssl = ssl.toLowerCase();
@@ -319,8 +320,8 @@ var tests = [];
 
 if (testFile === '') {
     var testFiles = JSON.parse(fs.readFileSync(rootDir + '/test-list.json', 'utf8'));
-    for (var i = 0; i < testFiles.suites.all.length; i++) {
-        var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles.suites.all[i], 'utf8'));
+    for (var i = 0; i < testFiles.suites[suite].length; i++) {
+        var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles.suites[suite][i], 'utf8'));
         tests = addTests(tests, json);
     }
 } else {
