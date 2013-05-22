@@ -1,4 +1,5 @@
 var async = require('async');
+var csv = require('csv');
 var dlanche = require('../lib');
 var fs = require('fs');
 var nconf = require('nconf');
@@ -39,6 +40,40 @@ function addTests(tests, json) {
     }
 
     return tests;
+}
+
+function getRecordsFromFile(path, callback) {
+    var records = [];
+
+    csv()
+    .from.path(path)
+    .on('record', function(row, index) {
+        if (index > 0) {
+            records.push({
+                'record_id': row[0],
+                'name': row[1],
+                'email': row[2],
+                'address': row[3],
+                'city': row[4],
+                'state': row[5],
+                'zip_code': row[6],
+                'phone_number': row[7],
+                'date_field': row[8],
+                'time_field': row[9],
+                'timestamp_field': row[10],
+                'boolean_field': row[11],
+                'int16_field': row[12],
+                'int32_field': row[13],
+                'int64_field': row[14],
+                'float_field': row[15],
+                'double_field': row[16],
+                'decimal_field': row[17],
+            });
+        }
+    })
+    .on('end', function(count) {
+        return callback(records);
+    });
 }
 
 function handleResult(startTime, test, err, data, callback) {
@@ -105,6 +140,17 @@ function deleteDataset(test, callback) {
     });
 }
 
+function deleteRecords(test, callback) {
+
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
+
+    var time = process.hrtime();
+    client.deleteRecords(test.parameters.dataset, test.parameters.filter, function(err) {
+        return handleResult(time, test, err, null, callback);
+    });
+}
+
 function getDatasetList(test, callback) {
 
     client.authKey = test.parameters.key;
@@ -160,6 +206,26 @@ function getSchema(test, callback) {
     });
 }
 
+function insertRecords(test, callback) {
+
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
+
+    if (test.body === 'dataset_file') {
+        getRecordsFromFile(rootDir + '/' + test.dataset_file, function(records) {
+            var time = process.hrtime();
+            client.insertRecords(test.parameters.dataset, records, function(err) {
+                return handleResult(time, test, err, null, callback);
+            });
+        });
+    } else {
+        var time = process.hrtime();
+        client.insertRecords(test.parameters.dataset, test.body.records, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+    }
+}
+
 function readRecords(test, callback) {
 
     client.authKey = test.parameters.key;
@@ -185,6 +251,10 @@ function execute(test, callback) {
         return deleteDataset(test, callback);
     }
 
+    if (test.method === 'delete_records') {
+        return deleteRecords(test, callback);
+    }
+
     if (test.method === 'get_dataset_list') {
         return getDatasetList(test, callback);
     }
@@ -193,7 +263,11 @@ function execute(test, callback) {
         return getSchema(test, callback);
     }
 
-    if (test.method === 'read') {
+    if (test.method === 'insert_records') {
+        return insertRecords(test, callback);
+    }
+
+    if (test.method === 'read_records') {
         return readRecords(test, callback);
     }
 
