@@ -24,7 +24,7 @@ var numPassed = 0;
 var client = null;
 
 //
-// functions
+// helper functions
 //
 
 function addTests(tests, json) {
@@ -116,6 +116,21 @@ function handleResult(startTime, test, err, data, callback) {
     }));
 
     return callback(null);
+}
+
+//
+// API functions
+//
+
+function addFields(test, callback) {
+
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
+
+    var time = process.hrtime();
+    client.addFields(test.parameters.dataset, test.body.fields, function(err) {
+        return handleResult(time, test, err, null, callback);
+    });
 }
 
 function createDataset(test, callback) {
@@ -241,6 +256,17 @@ function readRecords(test, callback) {
     });
 }
 
+function removeFields(test, callback) {
+
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
+
+    var time = process.hrtime();
+    client.removeFields(test.parameters.dataset, test.parameters.fields, function(err) {
+        return handleResult(time, test, err, null, callback);
+    });
+}
+
 function updateRecords(test, callback) {
 
     client.authKey = test.parameters.key;
@@ -253,6 +279,10 @@ function updateRecords(test, callback) {
 }
 
 function execute(test, callback) {
+
+    if (test.method === 'add_fields') {
+        return addFields(test, callback);
+    }
 
     if (test.method === 'create_dataset') {
         return createDataset(test, callback);
@@ -280,6 +310,10 @@ function execute(test, callback) {
 
     if (test.method === 'read_records') {
         return readRecords(test, callback);
+    }
+
+    if (test.method === 'remove_fields') {
+        return removeFields(test, callback);
     }
 
     if (test.method === 'update_records') {
