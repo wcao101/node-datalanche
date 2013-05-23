@@ -3,6 +3,7 @@ var csv = require('csv');
 var dlanche = require('../lib');
 var fs = require('fs');
 var nconf = require('nconf');
+var path = require('path');
 
 //
 // String extensions
@@ -42,11 +43,11 @@ function addTests(tests, json) {
     return tests;
 }
 
-function getRecordsFromFile(path, callback) {
+function getRecordsFromFile(filePath, callback) {
     var records = [];
 
     csv()
-    .from.path(path)
+    .from.path(filePath)
     .on('record', function(row, index) {
         if (index > 0) {
             records.push({
@@ -227,7 +228,7 @@ function insertRecords(test, callback) {
     client.authSecret = test.parameters.secret;
 
     if (test.body === 'dataset_file') {
-        getRecordsFromFile(rootDir + '/' + test.dataset_file, function(records) {
+        getRecordsFromFile(testDatasetPath, function(records) {
             var time = process.hrtime();
             client.insertRecords(test.parameters.dataset, records, function(err) {
                 return handleResult(time, test, err, null, callback);
@@ -263,6 +264,17 @@ function removeFields(test, callback) {
 
     var time = process.hrtime();
     client.removeFields(test.parameters.dataset, test.parameters.fields, function(err) {
+        return handleResult(time, test, err, null, callback);
+    });
+}
+
+function updateFields(test, callback) {
+
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
+
+    var time = process.hrtime();
+    client.updateFields(test.parameters.dataset, test.body, function(err) {
         return handleResult(time, test, err, null, callback);
     });
 }
@@ -316,6 +328,10 @@ function execute(test, callback) {
         return removeFields(test, callback);
     }
 
+    if (test.method === 'update_fields') {
+        return updateFields(test, callback);
+    }
+
     if (test.method === 'update_records') {
         return updateRecords(test, callback);
     }
@@ -329,14 +345,15 @@ function execute(test, callback) {
 nconf.use('memory');
 nconf.env().argv();
 
-var rootDir = nconf.get('testdir');
+var testFile = nconf.get('testfile');
 var validKey = nconf.get('key') || '';
 var validSecret = nconf.get('secret') || '';
-var testFile = nconf.get('testfile') || '';
 var host = nconf.get('host') || null;
 var port = nconf.get('port') || null;
 var ssl = nconf.get('ssl') || null;
 var suite = nconf.get('suite') || 'all';
+var testDatasetPath = null;
+var rootDir = '';
 
 if (ssl) {
     ssl = ssl.toLowerCase();
@@ -351,15 +368,13 @@ if (ssl) {
 
 // load tests
 var tests = [];
+var contents = JSON.parse(fs.readFileSync(testFile, 'utf8'));
 
-if (testFile === '') {
-    var testFiles = JSON.parse(fs.readFileSync(rootDir + '/test-suites.json', 'utf8'));
-    for (var i = 0; i < testFiles.suites[suite].length; i++) {
-        var json = JSON.parse(fs.readFileSync(rootDir + '/' + testFiles.suites[suite][i], 'utf8'));
-        tests = addTests(tests, json);
-    }
-} else {
-    var json = JSON.parse(fs.readFileSync(testFile, 'utf8'));
+rootDir = path.dirname(testFile);
+testDatasetPath = rootDir + '/' + contents.dataset_file;
+
+for (var i = 0; i < contents.suites[suite].length; i++) {
+    var json = JSON.parse(fs.readFileSync(rootDir + '/' + contents.suites[suite][i], 'utf8'));
     tests = addTests(tests, json);
 }
 
