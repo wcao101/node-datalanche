@@ -268,6 +268,17 @@ function removeFields(test, callback) {
     });
 }
 
+function setSchema(test, callback) {
+
+    client.authKey = test.parameters.key;
+    client.authSecret = test.parameters.secret;
+
+    var time = process.hrtime();
+    client.setSchema(test.parameters.dataset, test.body, function(err) {
+        return handleResult(time, test, err, null, callback);
+    });
+}
+
 function updateFields(test, callback) {
 
     client.authKey = test.parameters.key;
@@ -326,6 +337,10 @@ function execute(test, callback) {
 
     if (test.method === 'remove_fields') {
         return removeFields(test, callback);
+    }
+
+    if (test.method === 'set_schema') {
+        return setSchema(test, callback);
     }
 
     if (test.method === 'update_fields') {
