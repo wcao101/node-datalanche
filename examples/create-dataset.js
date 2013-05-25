@@ -5,6 +5,9 @@ var client = dlanche.createClient({
     secret: '',  // Add your API secret.
 });
 
+// Only name is required.
+// Only name and data_type are required for a field.
+// Only one field can be used as a primary key for the dataset.
 var schema = {
     name: 'example_dataset',
     description: 'example_dataset description text',

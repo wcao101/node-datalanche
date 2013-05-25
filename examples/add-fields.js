@@ -1,22 +1,32 @@
 var dlanche = require('../lib');
 
 var client = dlanche.createClient({
-    key: '7zNN1Pl9SQ6lNZwYe9mtQw==',    // Add your API key.
-    secret: 'VCBA1hLyS2mYdrL6kO/iKQ==',  // Add your API secret.
-    host: 'localhost',
-    port: 4001,
-    verifySsl: false,
+    key: '',    // Add your API key.
+    secret: '',  // Add your API secret.
 });
 
-var newFields = [
+// Only name and data_type are required.
+// Only one field can be used as a primary key for the dataset.
+var fields = [
     {
         name: 'column1',
         data_type: 'int64',
-        description: 'hello world',
+        description: 'column1 in an int64',
+        is_primary: true,
+    },
+    {
+        name: 'column2',
+        data_type: 'timestamp',
+        description: 'column2 is a timestamp',
+        is_primary: false,
+    },
+    {
+        name: 'column3',
+        data_type: 'string',
     },
 ];
 
-client.addFields('test_dataset', newFields, function(err) {
+client.addFields('example_dataset', fields, function(err) {
 
     if (err) {
         console.log(err);
