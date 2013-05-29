@@ -247,12 +247,15 @@ function readRecords(test, callback) {
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
+    var datasetName = test.parameters.dataset;
+
     // readRecords() does not care about these, remove them
     delete test.parameters.key;
     delete test.parameters.secret;
+    delete test.parameters.dataset;
 
     var time = process.hrtime();
-    client.readRecords(test.parameters, function(err, data) {
+    client.readRecords(datasetName, test.parameters, function(err, data) {
         return handleResult(time, test, err, data, callback);
     });
 }
