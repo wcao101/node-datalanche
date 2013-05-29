@@ -188,6 +188,10 @@ function getDatasetList(test, callback) {
             for (var i = 0; i < list.num_datasets; i++) {
                 var dataset = list.datasets[i];
 
+                // too variable to test
+                delete dataset.last_updated;
+                delete dataset.when_created;
+
                 for (var j = 0; j < test.expected.data.num_datasets; j++) {
                     if (JSON.stringify(dataset) === JSON.stringify(test.expected.data.datasets[j])) {
                         datasets.push(dataset);
@@ -406,19 +410,29 @@ client = dlanche.createClient({
 });
 
 // make sure dataset is deleted before running test
-client.deleteDataset("test_dataset", function(err) {
-    // ignore error
+client.deleteDataset('test_dataset', function(err) {
+    if (err) {
+        //console.log(err);
+        // ignore error
+    }
 
-    // loop through tests and execute them
-    async.forEachSeries(tests, execute, function(err) {
+    client.deleteDataset('new_test_dataset', function(err) {
         if (err) {
-            console.log(err);
-        } else {
-            console.log('-------------------------------');
-            console.log('passed: ' + numPassed.toString());
-            console.log('failed: ' + (tests.length - numPassed).toString());
-            console.log('total:  ' + tests.length.toString());
+            //console.log(err);
+            // ignore error
         }
-        return client.close();
+
+        // loop through tests and execute them
+        async.forEachSeries(tests, execute, function(err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('-------------------------------');
+                console.log('passed: ' + numPassed.toString());
+                console.log('failed: ' + (tests.length - numPassed).toString());
+                console.log('total:  ' + tests.length.toString());
+            }
+            return client.close();
+        });
     });
 });
