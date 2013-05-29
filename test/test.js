@@ -123,13 +123,13 @@ function handleResult(startTime, test, err, data, callback) {
 // API functions
 //
 
-function addFields(test, callback) {
+function addColumns(test, callback) {
 
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.addFields(test.parameters.dataset, test.body.fields, function(err) {
+    client.addColumns(test.parameters.dataset, test.body.columns, function(err) {
         return handleResult(time, test, err, null, callback);
     });
 }
@@ -257,35 +257,35 @@ function readRecords(test, callback) {
     });
 }
 
-function removeFields(test, callback) {
+function removeColumns(test, callback) {
 
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.removeFields(test.parameters.dataset, test.parameters.fields, function(err) {
+    client.removeColumns(test.parameters.dataset, test.parameters.columns, function(err) {
         return handleResult(time, test, err, null, callback);
     });
 }
 
-function setSchema(test, callback) {
+function setDetails(test, callback) {
 
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.setSchema(test.parameters.dataset, test.body, function(err) {
+    client.setDetails(test.parameters.dataset, test.body, function(err) {
         return handleResult(time, test, err, null, callback);
     });
 }
 
-function updateFields(test, callback) {
+function updateColumns(test, callback) {
 
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.updateFields(test.parameters.dataset, test.body, function(err) {
+    client.updateColumns(test.parameters.dataset, test.body, function(err) {
         return handleResult(time, test, err, null, callback);
     });
 }
@@ -303,8 +303,8 @@ function updateRecords(test, callback) {
 
 function execute(test, callback) {
 
-    if (test.method === 'add_fields') {
-        return addFields(test, callback);
+    if (test.method === 'add_columns') {
+        return addColumns(test, callback);
     }
 
     if (test.method === 'create_dataset') {
@@ -335,16 +335,16 @@ function execute(test, callback) {
         return readRecords(test, callback);
     }
 
-    if (test.method === 'remove_fields') {
-        return removeFields(test, callback);
+    if (test.method === 'remove_columns') {
+        return removeColumns(test, callback);
     }
 
-    if (test.method === 'set_schema') {
-        return setSchema(test, callback);
+    if (test.method === 'set_details') {
+        return setDetails(test, callback);
     }
 
-    if (test.method === 'update_fields') {
-        return updateFields(test, callback);
+    if (test.method === 'update_columns') {
+        return updateColumns(test, callback);
     }
 
     if (test.method === 'update_records') {
