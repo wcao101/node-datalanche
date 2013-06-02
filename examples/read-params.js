@@ -6,8 +6,7 @@ var client = dlanche.createClient({
 });
 
 var readParams = dlanche.createReadParams();
-readParams.dataset = 'medical_codes_ndc';
-readParams.fields = [ 'dosage_form', 'route', 'product_type' ];
+readParams.columns = [ 'dosage_form', 'route', 'product_type' ];
 readParams.filter = null; // look at read-filter.js or read-complex-filter.js
 readParams.limit = 5;
 readParams.skip = 0;
@@ -19,7 +18,7 @@ readParams.sort = null;
 readParams.sortAsc('dosage_form');
 readParams.sortDesc('product_type');
 
-client.readRecords(readParams, function(err, records) {
+client.readRecords('medical_codes_ndc', readParams, function(err, records) {
 
     if (err) {
         console.log(err);

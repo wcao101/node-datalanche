@@ -5,11 +5,7 @@ var client = dlanche.createClient({
     secret: '',  // Add your API secret.
 });
 
-// Use default read parameters. Only "dataset" is a required parameter.
-var readParams = dlanche.createReadParams();
-readParams.dataset = 'example_dataset';
-
-client.readRecords(readParams, function(err, records) {
+client.readRecords('medical_codes_ndc', null, function(err, records) {
 
     if (err) {
         console.log(err);

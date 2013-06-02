@@ -5,7 +5,7 @@ var client = dlanche.createClient({
     secret: '',  // Add your API secret.
 });
 
-client.getSchema('example_dataset', function(err, schema) {
+client.getSchema('medical_codes_ndc', function(err, schema) {
 
     if (err) {
         console.log(err);

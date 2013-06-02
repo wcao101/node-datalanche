@@ -11,11 +11,10 @@ var myFilter = dlanche.createFilter();
 myFilter.field('dosage_form').notEquals('capsule');
 
 var readParams = dlanche.createReadParams();
-readParams.dataset = 'medical_codes_ndc';
 readParams.filter = myFilter;
 readParams.limit = 5;
 
-client.readRecords(readParams, function(err, records) {
+client.readRecords('medical_codes_ndc', readParams, function(err, records) {
 
     if (err) {
         console.log(err);
