@@ -119,6 +119,40 @@ function handleResult(startTime, test, err, data, callback) {
     return callback(null);
 }
 
+function useRawQuery(keys, params) {
+    var useRaw = false;
+    for (k in params) {
+        if (keys.indexOf(k) === -1) {
+            useRaw = true;
+            break;
+        }
+    }
+    return useRaw;
+}
+
+// For testing unknown parameters. The API prevents users from adding
+// unknown parameters so we need to circumvent it.
+function queryRaw(type, url, body, callback) {
+
+    client.client.basicAuth(client.authKey, client.authSecret);
+
+    if (type === 'del') {
+        client.client.del(url, function(err, req, res, obj) {
+            return callback(err, null);
+        });
+    } else if (type === 'post') {
+        client.client.post(url, body, function(err, req, res, obj) {
+            return callback(err, null);
+        });
+    } else if (type === 'get') {
+        client.client.get(url, function(err, req, res, obj) {
+            return callback(err, obj);
+        });
+    } else {
+        return callback(new Error('unsupported query type'), null);
+    }
+}
+
 //
 // API functions
 //
@@ -136,22 +170,52 @@ function addColumns(test, callback) {
 
 function createDataset(test, callback) {
 
+    var params = test.body;
+    var keys = [
+        'name',
+        'description',
+        'is_private',
+        'license',
+        'sources',
+        'columns',
+    ];
+
+    var q = new dlanche.Query();
+    q.createTable(params.name);
+    q.description(params.description);
+    q.isPrivate(params.is_private);
+    q.license(params.license);
+    q.sources(params.sources);
+    q.columns(params.columns);
+
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
-    var time = process.hrtime();
-    client.createDataset(test.body, function(err) {
-        return handleResult(time, test, err, null, callback);
-    });
+    var useRaw = useRawQuery(keys, params);
+
+    if (useRaw === true) {
+        var time = process.hrtime();
+        queryRaw('post', '/create_table', params, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+    } else {
+        var time = process.hrtime();
+        client.query(q, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+    }
 }
 
 function deleteDataset(test, callback) {
 
+    var q = new dlanche.Query();
+    q.dropTable(test.parameters.dataset);
+
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.deleteDataset(test.parameters.dataset, function(err) {
+    client.query(q, function(err) {
         return handleResult(time, test, err, null, callback);
     });
 }
@@ -169,11 +233,14 @@ function deleteRecords(test, callback) {
 
 function getDatasetList(test, callback) {
 
+    var q = new dlanche.Query();
+    q.getDatasetList();
+
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.getDatasetList(function(err, list) {
+    client.query(q, function(err, list) {
 
         // getDatasetList() test is a bit different than the rest
         // because a server can have any number of datasets. We test
@@ -401,7 +468,7 @@ for (var i = 0; i < contents.suites[suite].length; i++) {
 }
 
 // create client
-client = dlanche.createClient({
+client = new dlanche.Client({
     key: validKey,
     secret: validSecret,
     host: host,
@@ -409,14 +476,16 @@ client = dlanche.createClient({
     verifySsl: ssl,
 });
 
+var q = new dlanche.Query();
+
 // make sure dataset is deleted before running test
-client.deleteDataset('test_dataset', function(err) {
+client.query(q.dropTable('test_dataset'), function(err) {
     if (err) {
         //console.log(err);
         // ignore error
     }
 
-    client.deleteDataset('new_test_dataset', function(err) {
+    client.query(q.dropTable('new_test_dataset'), function(err) {
         if (err) {
             //console.log(err);
             // ignore error

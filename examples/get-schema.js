@@ -1,16 +1,26 @@
-var dlanche = require('../lib');
+var dl = require('../lib');
 
-var client = dlanche.createClient({
-    key: '',    // Add your API key.
-    secret: '',  // Add your API secret.
+var client = new dl.Client({
+    key: 'nNErC0W5TFeISPW/MVFa6A==',    // Add your API key.
+    secret: 'Y7N2qt7XTE6lBEUF/uGk6Q==',  // Add your API secret.
+    host: 'localhost',
+    port: 4001,
+    verifySsl: false,
 });
 
-client.getSchema('medical_codes_ndc', function(err, schema) {
+var q = new dl.Query();
+q.getSchema('drnelson.medical_codes_ndc');
+q.limit(20);
+q.offset(100);
+q.total(true);
+q.distinct(false);
+
+client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log(JSON.stringify(schema));
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();
