@@ -222,11 +222,14 @@ function deleteDataset(test, callback) {
 
 function deleteRecords(test, callback) {
 
+    var q = new dlanche.Query();
+    q.deleteFrom(test.parameters.dataset).where(test.parameters.filter);
+
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.deleteRecords(test.parameters.dataset, test.parameters.filter, function(err) {
+    client.query(q, function(err) {
         return handleResult(time, test, err, null, callback);
     });
 }
@@ -277,11 +280,14 @@ function getDatasetList(test, callback) {
 
 function getSchema(test, callback) {
 
+    var q = new dlanche.Query();
+    q.getSchema(test.parameters.dataset);
+
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.getSchema(test.parameters.dataset, function(err, data) {
+    client.query(q, function(err, data) {
 
         // Delete date/time properties since they are probably
         // different than the test data. This is okay because
@@ -295,19 +301,26 @@ function getSchema(test, callback) {
 
 function insertRecords(test, callback) {
 
+    var q = new dlanche.Query();
+    q.insertInto(test.parameters.dataset);
+
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     if (test.body === 'dataset_file') {
         getRecordsFromFile(testDatasetPath, function(records) {
+            q.values(records);
+
             var time = process.hrtime();
-            client.insertRecords(test.parameters.dataset, records, function(err) {
+            client.query(q, function(err) {
                 return handleResult(time, test, err, null, callback);
             });
         });
     } else {
+        q.values(test.body.records);
+
         var time = process.hrtime();
-        client.insertRecords(test.parameters.dataset, test.body.records, function(err) {
+        client.query(q, function(err) {
             return handleResult(time, test, err, null, callback);
         });
     }
@@ -315,18 +328,25 @@ function insertRecords(test, callback) {
 
 function readRecords(test, callback) {
 
+    var q = new dlanche.Query();
+    if (test.parameters.columns && test.parameters.columns === '*') {
+        q.selectAll();
+    } else {
+        q.select(test.parameters.columns);
+    }
+    q.distinct(test.parameters.distinct);
+    q.from(test.parameters.dataset);
+    q.where(test.parameters.filter);
+    q.orderBy(test.parameters.sort);
+    q.offset(test.parameters.skip);
+    q.limit(test.parameters.limit);
+    q.total(test.parameters.total);
+
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
-    var datasetName = test.parameters.dataset;
-
-    // readRecords() does not care about these, remove them
-    delete test.parameters.key;
-    delete test.parameters.secret;
-    delete test.parameters.dataset;
-
     var time = process.hrtime();
-    client.readRecords(datasetName, test.parameters, function(err, data) {
+    client.query(q, function(err, data) {
         return handleResult(time, test, err, data, callback);
     });
 }
