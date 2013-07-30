@@ -43,14 +43,14 @@ function addTests(tests, json) {
     return tests;
 }
 
-function getRecordsFromFile(filePath, callback) {
-    var records = [];
+function getRowsFromFile(filePath, callback) {
+    var rows = [];
 
     csv()
     .from.path(filePath)
     .on('record', function(row, index) {
         if (index > 0) {
-            records.push({
+            rows.push({
                 'record_id': row[0],
                 'name': row[1],
                 'email': row[2],
@@ -73,7 +73,7 @@ function getRecordsFromFile(filePath, callback) {
         }
     })
     .on('end', function(count) {
-        return callback(records);
+        return callback(rows);
     });
 }
 
@@ -157,20 +157,33 @@ function queryRaw(type, url, body, callback) {
 // API functions
 //
 
-function addColumns(test, callback) {
+function alterTable(test, callback) {
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
+    var params = test.parameters;
+
+    var q = new dlanche.Query();
+    q.alterTable(params.name);
+    q.rename(params.rename);
+    q.description(params.description);
+    q.isPrivate(params.is_private);
+    q.license(params.license);
+    q.sources(params.sources);
+    q.addColumn(params.add_columns);
+    q.dropColumn(params.drop_columns);
+    q.alterColumn(params.alter_columns);
+
+    client.authKey = params.key;
+    client.authSecret = params.secret;
 
     var time = process.hrtime();
-    client.addColumns(test.parameters.dataset, test.body.columns, function(err) {
+    client.query(q, function(err) {
         return handleResult(time, test, err, null, callback);
     });
 }
 
-function createDataset(test, callback) {
+function createTable(test, callback) {
 
-    var params = test.body;
+    var params = test.parameters;
     var keys = [
         'name',
         'description',
@@ -188,31 +201,35 @@ function createDataset(test, callback) {
     q.sources(params.sources);
     q.columns(params.columns);
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
+    client.authKey = params.key;
+    client.authSecret = params.secret;
+
+    delete params.key;
+    delete params.secret;
 
     var useRaw = useRawQuery(keys, params);
+    var time = process.hrtime();
 
     if (useRaw === true) {
-        var time = process.hrtime();
         queryRaw('post', '/create_table', params, function(err) {
             return handleResult(time, test, err, null, callback);
         });
     } else {
-        var time = process.hrtime();
         client.query(q, function(err) {
             return handleResult(time, test, err, null, callback);
         });
     }
 }
 
-function deleteDataset(test, callback) {
+function dropTable(test, callback) {
+
+    var params = test.parameters;
 
     var q = new dlanche.Query();
-    q.dropTable(test.parameters.dataset);
+    q.dropTable(params.name);
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
+    client.authKey = params.key;
+    client.authSecret = params.secret;
 
     var time = process.hrtime();
     client.query(q, function(err) {
@@ -220,13 +237,15 @@ function deleteDataset(test, callback) {
     });
 }
 
-function deleteRecords(test, callback) {
+function deleteFrom(test, callback) {
+
+    var params = test.parameters;
 
     var q = new dlanche.Query();
-    q.deleteFrom(test.parameters.dataset).where(test.parameters.filter);
+    q.deleteFrom(params.name).where(params.where);
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
+    client.authKey = params.key;
+    client.authSecret = params.secret;
 
     var time = process.hrtime();
     client.query(q, function(err) {
@@ -236,42 +255,44 @@ function deleteRecords(test, callback) {
 
 function getTableList(test, callback) {
 
+    var params = test.parameters;
+
     var q = new dlanche.Query();
     q.getTableList();
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
+    client.authKey = params.key;
+    client.authSecret = params.secret;
 
     var time = process.hrtime();
     client.query(q, function(err, list) {
 
         // getTableList() test is a bit different than the rest
-        // because a server can have any number of datasets. We test
-        // that the expected dataset(s) is listed rather than
+        // because a server can have any number of tables. We test
+        // that the expected table(s) is listed rather than
         // checking the entire result is valid, but only if a valid
         // response is expected.
 
         if (test.expected.statusCode === 200) {
 
-            var datasets = [];
+            var tables = [];
             
-            for (var i = 0; i < list.num_datasets; i++) {
-                var dataset = list.datasets[i];
+            for (var i = 0; i < list.num_tables; i++) {
+                var table = list.tables[i];
 
                 // too variable to test
-                delete dataset.last_updated;
-                delete dataset.when_created;
+                delete table.last_updated;
+                delete table.when_created;
 
-                for (var j = 0; j < test.expected.data.num_datasets; j++) {
-                    if (JSON.stringify(dataset) === JSON.stringify(test.expected.data.datasets[j])) {
-                        datasets.push(dataset);
+                for (var j = 0; j < test.expected.data.num_tables; j++) {
+                    if (JSON.stringify(table) === JSON.stringify(test.expected.data.tables[j])) {
+                        tables.push(table);
                         break;
                     }
                 }
             }
 
-            list.num_datasets = datasets.length;
-            list.datasets = datasets;
+            list.num_tables = tables.length;
+            list.tables = tables;
         }
 
         return handleResult(time, test, err, list, callback);
@@ -280,11 +301,13 @@ function getTableList(test, callback) {
 
 function getTableInfo(test, callback) {
 
-    var q = new dlanche.Query();
-    q.getTableInfo(test.parameters.dataset);
+    var params = test.parameters;
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
+    var q = new dlanche.Query();
+    q.getTableInfo(params.name);
+
+    client.authKey = params.key;
+    client.authSecret = params.secret;
 
     var time = process.hrtime();
     client.query(q, function(err, data) {
@@ -299,17 +322,19 @@ function getTableInfo(test, callback) {
     });
 }
 
-function insertRecords(test, callback) {
+function insertInto(test, callback) {
+
+    var params = test.parameters;
 
     var q = new dlanche.Query();
-    q.insertInto(test.parameters.dataset);
+    q.insertInto(params.name);
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
+    client.authKey = params.key;
+    client.authSecret = params.secret;
 
-    if (test.body === 'dataset_file') {
-        getRecordsFromFile(testDatasetPath, function(records) {
-            q.values(records);
+    if (params.values === 'dataset_file') {
+        getRowsFromFile(testDatasetPath, function(rows) {
+            q.values(rows);
 
             var time = process.hrtime();
             client.query(q, function(err) {
@@ -317,7 +342,7 @@ function insertRecords(test, callback) {
             });
         });
     } else {
-        q.values(test.body.records);
+        q.values(params.values);
 
         var time = process.hrtime();
         client.query(q, function(err) {
@@ -326,24 +351,26 @@ function insertRecords(test, callback) {
     }
 }
 
-function readRecords(test, callback) {
+function selectFrom(test, callback) {
+
+    var params = test.parameters;
 
     var q = new dlanche.Query();
-    if (test.parameters.columns && test.parameters.columns === '*') {
+    if (params.select && params.select === '*') {
         q.selectAll();
     } else {
-        q.select(test.parameters.columns);
+        q.select(params.select);
     }
-    q.distinct(test.parameters.distinct);
-    q.from(test.parameters.dataset);
-    q.where(test.parameters.filter);
-    q.orderBy(test.parameters.sort);
-    q.offset(test.parameters.skip);
-    q.limit(test.parameters.limit);
-    q.total(test.parameters.total);
+    q.distinct(params.distinct);
+    q.from(params.from);
+    q.where(params.where);
+    q.orderBy(params.order_by);
+    q.offset(params.offset);
+    q.limit(params.limit);
+    q.total(params.total);
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
+    client.authKey = params.key;
+    client.authSecret = params.secret;
 
     var time = process.hrtime();
     client.query(q, function(err, data) {
@@ -351,48 +378,17 @@ function readRecords(test, callback) {
     });
 }
 
-function removeColumns(test, callback) {
+function update(test, callback) {
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
-
-    var time = process.hrtime();
-    client.removeColumns(test.parameters.dataset, test.parameters.columns, function(err) {
-        return handleResult(time, test, err, null, callback);
-    });
-}
-
-function setDetails(test, callback) {
-
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
-
-    var time = process.hrtime();
-    client.setDetails(test.parameters.dataset, test.body, function(err) {
-        return handleResult(time, test, err, null, callback);
-    });
-}
-
-function updateColumns(test, callback) {
-
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
-
-    var time = process.hrtime();
-    client.updateColumns(test.parameters.dataset, test.body, function(err) {
-        return handleResult(time, test, err, null, callback);
-    });
-}
-
-function updateRecords(test, callback) {
+    var params = test.parameters;
 
     var q = new dlanche.Query();
-    q.update(test.parameters.dataset);
-    q.set(test.body);
-    q.where(test.parameters.filter);
+    q.update(params.name);
+    q.set(params.set);
+    q.where(params.where);
 
-    client.authKey = test.parameters.key;
-    client.authSecret = test.parameters.secret;
+    client.authKey = params.key;
+    client.authSecret = params.secret;
 
     var time = process.hrtime();
     client.query(q, function(err) {
@@ -402,52 +398,40 @@ function updateRecords(test, callback) {
 
 function execute(test, callback) {
 
-    if (test.method === 'add_columns') {
-        return addColumns(test, callback);
+    if (test.method === 'alter_table') {
+        return alterTable(test, callback);
     }
 
-    if (test.method === 'create_dataset') {
-        return createDataset(test, callback);
+    if (test.method === 'create_table') {
+        return createTable(test, callback);
     }
 
-    if (test.method === 'delete_dataset') {
-        return deleteDataset(test, callback);
+    if (test.method === 'delete_from') {
+        return deleteFrom(test, callback);
     }
 
-    if (test.method === 'delete_records') {
-        return deleteRecords(test, callback);
+    if (test.method === 'drop_table') {
+        return dropTable(test, callback);
     }
 
-    if (test.method === 'get_dataset_list') {
-        return getTableList(test, callback);
-    }
-
-    if (test.method === 'get_schema') {
+    if (test.method === 'get_table_info') {
         return getTableInfo(test, callback);
     }
 
-    if (test.method === 'insert_records') {
-        return insertRecords(test, callback);
+    if (test.method === 'get_table_list') {
+        return getTableList(test, callback);
     }
 
-    if (test.method === 'read_records') {
-        return readRecords(test, callback);
+    if (test.method === 'insert_into') {
+        return insertInto(test, callback);
     }
 
-    if (test.method === 'remove_columns') {
-        return removeColumns(test, callback);
+    if (test.method === 'select_from') {
+        return selectFrom(test, callback);
     }
 
-    if (test.method === 'set_details') {
-        return setDetails(test, callback);
-    }
-
-    if (test.method === 'update_columns') {
-        return updateColumns(test, callback);
-    }
-
-    if (test.method === 'update_records') {
-        return updateRecords(test, callback);
+    if (test.method === 'update') {
+        return update(test, callback);
     }
 
     return callback(new Error(test.method + ' method not found'));
@@ -503,7 +487,7 @@ client = new dlanche.Client({
 
 var q = new dlanche.Query();
 
-// make sure dataset is deleted before running test
+// make sure table is deleted before running test
 client.query(q.dropTable('test_dataset'), function(err) {
     if (err) {
         //console.log(err);
