@@ -234,10 +234,10 @@ function deleteRecords(test, callback) {
     });
 }
 
-function getDatasetList(test, callback) {
+function getTableList(test, callback) {
 
     var q = new dlanche.Query();
-    q.getDatasetList();
+    q.getTableList();
 
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
@@ -245,7 +245,7 @@ function getDatasetList(test, callback) {
     var time = process.hrtime();
     client.query(q, function(err, list) {
 
-        // getDatasetList() test is a bit different than the rest
+        // getTableList() test is a bit different than the rest
         // because a server can have any number of datasets. We test
         // that the expected dataset(s) is listed rather than
         // checking the entire result is valid, but only if a valid
@@ -278,10 +278,10 @@ function getDatasetList(test, callback) {
     });
 }
 
-function getSchema(test, callback) {
+function getTableInfo(test, callback) {
 
     var q = new dlanche.Query();
-    q.getSchema(test.parameters.dataset);
+    q.getTableInfo(test.parameters.dataset);
 
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
@@ -414,11 +414,11 @@ function execute(test, callback) {
     }
 
     if (test.method === 'get_dataset_list') {
-        return getDatasetList(test, callback);
+        return getTableList(test, callback);
     }
 
     if (test.method === 'get_schema') {
-        return getSchema(test, callback);
+        return getTableInfo(test, callback);
     }
 
     if (test.method === 'insert_records') {
