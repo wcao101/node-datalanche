@@ -386,11 +386,16 @@ function updateColumns(test, callback) {
 
 function updateRecords(test, callback) {
 
+    var q = new dlanche.Query();
+    q.update(test.parameters.dataset);
+    q.set(test.body);
+    q.where(test.parameters.filter);
+
     client.authKey = test.parameters.key;
     client.authSecret = test.parameters.secret;
 
     var time = process.hrtime();
-    client.updateRecords(test.parameters.dataset, test.body, test.parameters.filter, function(err) {
+    client.query(q, function(err) {
         return handleResult(time, test, err, null, callback);
     });
 }
