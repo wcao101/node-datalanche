@@ -142,7 +142,7 @@ function queryRaw(type, url, body, callback) {
         });
     } else if (type === 'post') {
         client.client.post(url, body, function(err, req, res, obj) {
-            return callback(err, null);
+            return callback(err, obj);
         });
     } else if (type === 'get') {
         client.client.get(url, function(err, req, res, obj) {
@@ -354,6 +354,16 @@ function insertInto(test, callback) {
 function selectFrom(test, callback) {
 
     var params = test.parameters;
+    var keys = [
+        'select',
+        'distinct',
+        'from',
+        'where',
+        'order_by',
+        'offset',
+        'limit',
+        'total',
+    ];
 
     var q = new dlanche.Query();
     if (params.select && params.select === '*') {
@@ -372,10 +382,21 @@ function selectFrom(test, callback) {
     client.authKey = params.key;
     client.authSecret = params.secret;
 
+    delete params.key;
+    delete params.secret;
+
+    var useRaw = useRawQuery(keys, params);
     var time = process.hrtime();
-    client.query(q, function(err, data) {
-        return handleResult(time, test, err, data, callback);
-    });
+
+    if (useRaw === true) {
+        queryRaw('post', '/select_from', params, function(err, data) {
+            return handleResult(time, test, err, data, callback);
+        });
+    } else {
+        client.query(q, function(err, data) {
+            return handleResult(time, test, err, data, callback);
+        });
+    }
 }
 
 function update(test, callback) {
