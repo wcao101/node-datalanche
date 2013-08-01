@@ -359,6 +359,7 @@ function selectFrom(test, callback) {
         'distinct',
         'from',
         'where',
+        'group_by',
         'order_by',
         'offset',
         'limit',
@@ -374,6 +375,7 @@ function selectFrom(test, callback) {
     q.distinct(params.distinct);
     q.from(params.from);
     q.where(params.where);
+    q.groupBy(params.group_by);
     q.orderBy(params.order_by);
     q.offset(params.offset);
     q.limit(params.limit);
