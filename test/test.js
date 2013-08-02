@@ -367,11 +367,7 @@ function selectFrom(test, callback) {
     ];
 
     var q = new dlanche.Query();
-    if (params.select && params.select === '*') {
-        q.selectAll();
-    } else {
-        q.select(params.select);
-    }
+    q.select(params.select);
     q.distinct(params.distinct);
     q.from(params.from);
     q.where(params.where);
