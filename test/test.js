@@ -160,25 +160,53 @@ function queryRaw(type, url, body, callback) {
 function alterTable(test, callback) {
 
     var params = test.parameters;
-
-    var q = new dlanche.Query();
-    q.alterTable(params.name);
-    q.rename(params.rename);
-    q.description(params.description);
-    q.isPrivate(params.is_private);
-    q.license(params.license);
-    q.sources(params.sources);
-    q.addColumn(params.add_columns);
-    q.dropColumn(params.drop_columns);
-    q.alterColumn(params.alter_columns);
+    var keys = [
+        'name',
+        'rename',
+        'description',
+        'is_private',
+        'license',
+        'sources',
+        'add_columns',
+        'drop_columns',
+        'alter_columns',
+    ];
 
     client.authKey = params.key;
     client.authSecret = params.secret;
 
-    var time = process.hrtime();
-    client.query(q, function(err) {
-        return handleResult(time, test, err, null, callback);
-    });
+    // Delete key and secret from params. They can screw up
+    // raw query test and client's auth has already been set to them.
+    delete params.key;
+    delete params.secret;
+
+    var useRaw = useRawQuery(keys, params);
+    
+    if (useRaw === true) {
+
+        var time = process.hrtime();
+        queryRaw('post', '/alter_table', params, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+
+    } else {
+
+        var q = new dlanche.Query();
+        q.alterTable(params.name);
+        q.rename(params.rename);
+        q.description(params.description);
+        q.isPrivate(params.is_private);
+        q.license(params.license);
+        q.sources(params.sources);
+        q.addColumn(params.add_columns);
+        q.dropColumn(params.drop_columns);
+        q.alterColumn(params.alter_columns);
+
+        var time = process.hrtime();
+        client.query(q, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+    }
 }
 
 function createTable(test, callback) {
@@ -193,28 +221,34 @@ function createTable(test, callback) {
         'columns',
     ];
 
-    var q = new dlanche.Query();
-    q.createTable(params.name);
-    q.description(params.description);
-    q.isPrivate(params.is_private);
-    q.license(params.license);
-    q.sources(params.sources);
-    q.columns(params.columns);
-
     client.authKey = params.key;
     client.authSecret = params.secret;
 
+    // Delete key and secret from params. They can screw up
+    // raw query test and client's auth has already been set to them.
     delete params.key;
     delete params.secret;
 
     var useRaw = useRawQuery(keys, params);
-    var time = process.hrtime();
-
+    
     if (useRaw === true) {
+
+        var time = process.hrtime();
         queryRaw('post', '/create_table', params, function(err) {
             return handleResult(time, test, err, null, callback);
         });
+
     } else {
+
+        var q = new dlanche.Query();
+        q.createTable(params.name);
+        q.description(params.description);
+        q.isPrivate(params.is_private);
+        q.license(params.license);
+        q.sources(params.sources);
+        q.columns(params.columns);
+
+        var time = process.hrtime();
         client.query(q, function(err) {
             return handleResult(time, test, err, null, callback);
         });
@@ -224,130 +258,255 @@ function createTable(test, callback) {
 function dropTable(test, callback) {
 
     var params = test.parameters;
-
-    var q = new dlanche.Query();
-    q.dropTable(params.name);
+    var keys = [ 'name' ];
 
     client.authKey = params.key;
     client.authSecret = params.secret;
 
-    var time = process.hrtime();
-    client.query(q, function(err) {
-        return handleResult(time, test, err, null, callback);
-    });
-}
+    // Delete key and secret from params. They can screw up
+    // raw query test and client's auth has already been set to them.
+    delete params.key;
+    delete params.secret;
 
-function deleteFrom(test, callback) {
+    var useRaw = useRawQuery(keys, params);
+    
+    if (useRaw === true) {
 
-    var params = test.parameters;
-
-    var q = new dlanche.Query();
-    q.deleteFrom(params.name).where(params.where);
-
-    client.authKey = params.key;
-    client.authSecret = params.secret;
-
-    var time = process.hrtime();
-    client.query(q, function(err) {
-        return handleResult(time, test, err, null, callback);
-    });
-}
-
-function getTableList(test, callback) {
-
-    var params = test.parameters;
-
-    var q = new dlanche.Query();
-    q.getTableList();
-
-    client.authKey = params.key;
-    client.authSecret = params.secret;
-
-    var time = process.hrtime();
-    client.query(q, function(err, list) {
-
-        // getTableList() test is a bit different than the rest
-        // because a server can have any number of tables. We test
-        // that the expected table(s) is listed rather than
-        // checking the entire result is valid, but only if a valid
-        // response is expected.
-
-        if (test.expected.statusCode === 200) {
-
-            var tables = [];
-            
-            for (var i = 0; i < list.num_tables; i++) {
-                var table = list.tables[i];
-
-                // too variable to test
-                delete table.last_updated;
-                delete table.when_created;
-
-                for (var j = 0; j < test.expected.data.num_tables; j++) {
-                    if (JSON.stringify(table) === JSON.stringify(test.expected.data.tables[j])) {
-                        tables.push(table);
-                        break;
-                    }
-                }
-            }
-
-            list.num_tables = tables.length;
-            list.tables = tables;
-        }
-
-        return handleResult(time, test, err, list, callback);
-    });
-}
-
-function getTableInfo(test, callback) {
-
-    var params = test.parameters;
-
-    var q = new dlanche.Query();
-    q.getTableInfo(params.name);
-
-    client.authKey = params.key;
-    client.authSecret = params.secret;
-
-    var time = process.hrtime();
-    client.query(q, function(err, data) {
-
-        // Delete date/time properties since they are probably
-        // different than the test data. This is okay because
-        // the server sets these values on write operations.
-        delete data.when_created;
-        delete data.last_updated;
-
-        return handleResult(time, test, err, data, callback);
-    });
-}
-
-function insertInto(test, callback) {
-
-    var params = test.parameters;
-
-    var q = new dlanche.Query();
-    q.insertInto(params.name);
-
-    client.authKey = params.key;
-    client.authSecret = params.secret;
-
-    if (params.values === 'dataset_file') {
-        getRowsFromFile(testDatasetPath, function(rows) {
-            q.values(rows);
-
-            var time = process.hrtime();
-            client.query(q, function(err) {
-                return handleResult(time, test, err, null, callback);
-            });
+        var time = process.hrtime();
+        queryRaw('del', '/drop_table', params, function(err) {
+            return handleResult(time, test, err, null, callback);
         });
+
     } else {
-        q.values(params.values);
+
+        var q = new dlanche.Query();
+        q.dropTable(params.name);
 
         var time = process.hrtime();
         client.query(q, function(err) {
             return handleResult(time, test, err, null, callback);
         });
+    }
+}
+
+function deleteFrom(test, callback) {
+
+    var params = test.parameters;
+    var keys = [ 'name', 'where' ];
+
+    client.authKey = params.key;
+    client.authSecret = params.secret;
+
+    // Delete key and secret from params. They can screw up
+    // raw query test and client's auth has already been set to them.
+    delete params.key;
+    delete params.secret;
+
+    var useRaw = useRawQuery(keys, params);
+    
+    if (useRaw === true) {
+
+        var time = process.hrtime();
+        queryRaw('post', '/delete_from', params, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+
+    } else {
+
+        var q = new dlanche.Query();
+        q.deleteFrom(params.name).where(params.where);
+
+        var time = process.hrtime();
+        client.query(q, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+    }
+}
+
+function getTableList(test, callback) {
+
+    var params = test.parameters;
+    var keys = [];
+
+    client.authKey = params.key;
+    client.authSecret = params.secret;
+
+    // Delete key and secret from params. They can screw up
+    // raw query test and client's auth has already been set to them.
+    delete params.key;
+    delete params.secret;
+
+    var useRaw = useRawQuery(keys, params);
+    
+    if (useRaw === true) {
+
+        var time = process.hrtime();
+        queryRaw('get', '/get_table_list', params, function(err, list) {
+
+            // getTableList() test is a bit different than the rest
+            // because a server can have any number of tables. We test
+            // that the expected table(s) is listed rather than
+            // checking the entire result is valid, but only if a valid
+            // response is expected.
+            if (test.expected.statusCode === 200) {
+
+                var tables = [];
+                
+                for (var i = 0; i < list.num_tables; i++) {
+                    var table = list.tables[i];
+
+                    // too variable to test
+                    delete table.last_updated;
+                    delete table.when_created;
+
+                    for (var j = 0; j < test.expected.data.num_tables; j++) {
+                        if (JSON.stringify(table) === JSON.stringify(test.expected.data.tables[j])) {
+                            tables.push(table);
+                            break;
+                        }
+                    }
+                }
+
+                list.num_tables = tables.length;
+                list.tables = tables;
+            }
+
+            return handleResult(time, test, err, list, callback);
+        });
+
+    } else {
+
+        var q = new dlanche.Query();
+        q.getTableList();
+
+        var time = process.hrtime();
+        client.query(q, function(err, list) {
+
+            // getTableList() test is a bit different than the rest
+            // because a server can have any number of tables. We test
+            // that the expected table(s) is listed rather than
+            // checking the entire result is valid, but only if a valid
+            // response is expected.
+            if (test.expected.statusCode === 200) {
+
+                var tables = [];
+                
+                for (var i = 0; i < list.num_tables; i++) {
+                    var table = list.tables[i];
+
+                    // too variable to test
+                    delete table.last_updated;
+                    delete table.when_created;
+
+                    for (var j = 0; j < test.expected.data.num_tables; j++) {
+                        if (JSON.stringify(table) === JSON.stringify(test.expected.data.tables[j])) {
+                            tables.push(table);
+                            break;
+                        }
+                    }
+                }
+
+                list.num_tables = tables.length;
+                list.tables = tables;
+            }
+
+            return handleResult(time, test, err, list, callback);
+        });
+    }
+}
+
+function getTableInfo(test, callback) {
+
+    var params = test.parameters;
+    var keys = [ 'name' ];
+
+    client.authKey = params.key;
+    client.authSecret = params.secret;
+
+    // Delete key and secret from params. They can screw up
+    // raw query test and client's auth has already been set to them.
+    delete params.key;
+    delete params.secret;
+
+    var useRaw = useRawQuery(keys, params);
+    
+    if (useRaw === true) {
+
+        var time = process.hrtime();
+        queryRaw('get', '/get_table_info', params, function(err, data) {
+
+            // Delete date/time properties since they are probably
+            // different than the test data. This is okay because
+            // the server sets these values on write operations.
+            delete data.when_created;
+            delete data.last_updated;
+
+            return handleResult(time, test, err, data, callback);
+        });
+
+    } else {
+
+        var q = new dlanche.Query();
+        q.getTableInfo(params.name);
+
+        var time = process.hrtime();
+        client.query(q, function(err, data) {
+
+            // Delete date/time properties since they are probably
+            // different than the test data. This is okay because
+            // the server sets these values on write operations.
+            delete data.when_created;
+            delete data.last_updated;
+
+            return handleResult(time, test, err, data, callback);
+        });
+    }
+}
+
+function insertInto(test, callback) {
+
+    var params = test.parameters;
+    var keys = [ 'name', 'values' ];
+
+    client.authKey = params.key;
+    client.authSecret = params.secret;
+
+    // Delete key and secret from params. They can screw up
+    // raw query test and client's auth has already been set to them.
+    delete params.key;
+    delete params.secret;
+
+    var useRaw = useRawQuery(keys, params);
+    
+    if (useRaw === true) {
+
+        var time = process.hrtime();
+        queryRaw('post', '/insert_into', params, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+
+    } else {
+
+        var q = new dlanche.Query();
+        q.insertInto(params.name);
+
+        if (params.values === 'dataset_file') {
+            getRowsFromFile(testDatasetPath, function(rows) {
+                q.values(rows);
+
+                var time = process.hrtime();
+                client.query(q, function(err) {
+                    return handleResult(time, test, err, null, callback);
+                });
+            });
+        } else {
+            q.values(params.values);
+
+            var time = process.hrtime();
+            client.query(q, function(err) {
+                return handleResult(time, test, err, null, callback);
+            });
+        }
     }
 }
 
@@ -366,31 +525,37 @@ function selectFrom(test, callback) {
         'total',
     ];
 
-    var q = new dlanche.Query();
-    q.select(params.select);
-    q.distinct(params.distinct);
-    q.from(params.from);
-    q.where(params.where);
-    q.groupBy(params.group_by);
-    q.orderBy(params.order_by);
-    q.offset(params.offset);
-    q.limit(params.limit);
-    q.total(params.total);
-
     client.authKey = params.key;
     client.authSecret = params.secret;
 
+    // Delete key and secret from params. They can screw up
+    // raw query test and client's auth has already been set to them.
     delete params.key;
     delete params.secret;
 
     var useRaw = useRawQuery(keys, params);
-    var time = process.hrtime();
-
+    
     if (useRaw === true) {
+
+        var time = process.hrtime();
         queryRaw('post', '/select_from', params, function(err, data) {
             return handleResult(time, test, err, data, callback);
         });
+
     } else {
+
+        var q = new dlanche.Query();
+        q.select(params.select);
+        q.distinct(params.distinct);
+        q.from(params.from);
+        q.where(params.where);
+        q.groupBy(params.group_by);
+        q.orderBy(params.order_by);
+        q.offset(params.offset);
+        q.limit(params.limit);
+        q.total(params.total);
+
+        var time = process.hrtime();
         client.query(q, function(err, data) {
             return handleResult(time, test, err, data, callback);
         });
@@ -400,19 +565,37 @@ function selectFrom(test, callback) {
 function update(test, callback) {
 
     var params = test.parameters;
-
-    var q = new dlanche.Query();
-    q.update(params.name);
-    q.set(params.set);
-    q.where(params.where);
+    var keys = [ 'name', 'set', 'where' ];
 
     client.authKey = params.key;
     client.authSecret = params.secret;
 
-    var time = process.hrtime();
-    client.query(q, function(err) {
-        return handleResult(time, test, err, null, callback);
-    });
+    // Delete key and secret from params. They can screw up
+    // raw query test and client's auth has already been set to them.
+    delete params.key;
+    delete params.secret;
+
+    var useRaw = useRawQuery(keys, params);
+    
+    if (useRaw === true) {
+
+        var time = process.hrtime();
+        queryRaw('post', '/update', params, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+
+    } else {
+
+        var q = new dlanche.Query();
+        q.update(params.name);
+        q.set(params.set);
+        q.where(params.where);
+
+        var time = process.hrtime();
+        client.query(q, function(err) {
+            return handleResult(time, test, err, null, callback);
+        });
+    }
 }
 
 function execute(test, callback) {
