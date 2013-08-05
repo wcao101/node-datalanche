@@ -28,6 +28,18 @@ var client = null;
 // helper functions
 //
 
+function isArray(value) {
+    var s = typeof(value);
+    if (value && s === 'object') {
+        if (typeof(value.length) === 'number'
+            && !(value.propertyIsEnumerable('length'))
+            && typeof(value.splice) === 'function') {
+            return true;
+        }
+    }
+    return false;
+}
+
 function addTests(tests, json) {
     for (var j = 0; j < json.tests.length; j++) {
         var test = json.tests[j];
@@ -198,8 +210,35 @@ function alterTable(test, callback) {
         q.isPrivate(params.is_private);
         q.license(params.license);
         q.sources(params.sources);
-        q.addColumn(params.add_columns);
-        q.dropColumn(params.drop_columns);
+
+        if (isArray(params.add_columns) === true) {
+            for (var i = 0; i < params.add_columns.length; i++) {
+                q.addColumn(params.add_columns[i]);
+            }
+        } else {
+            // bypass functions to test invalid types
+            q.params.addColumns = params.add_columns;
+        }
+
+        if (isArray(params.drop_columns) === true) {
+            for (var i = 0; i < params.drop_columns.length; i++) {
+                q.dropColumn(params.drop_columns[i]);
+            }
+        } else {
+            // bypass functions to test invalid types
+            q.params.dropColumns = params.drop_columns;
+        }
+
+        // TODO: fix IF statement
+        if (isArray(params.alter_columns) === true) {
+            for (var i = 0; i < params.alter_columns.length; i++) {
+                q.alterColumn(params.alter_columns[i]);
+            }
+        } else {
+            // bypass functions to test invalid types
+            q.params.alterColumns = params.alter_columns;
+        }
+
         q.alterColumn(params.alter_columns);
 
         var time = process.hrtime();
