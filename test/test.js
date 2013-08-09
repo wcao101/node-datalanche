@@ -28,6 +28,12 @@ var client = null;
 // helper functions
 //
 
+if (typeof String.prototype.startsWith != 'function') {
+    String.prototype.startsWith = function (str){
+        return this.slice(0, str.length) == str;
+    };
+}
+
 function isArray(value) {
     var s = typeof(value);
     if (value && s === 'object') {
@@ -106,9 +112,19 @@ function handleResult(startTime, test, err, data, callback) {
     };
 
     if (err) {
+
+        var message = err.body.message;
+
+        // Postgres errors sometimes start with "Error:" or "error:". Not sure why.
+        // We should be case-insenitive in this case, and match the definition in
+        // the tests.
+        if (message.startsWith('error:') === true) {
+            message = message.replace('error:', 'Error:');
+        }
+
         actual.statusCode = err.statusCode;
         actual.exception = err.body.code;
-        actual.data = err.body.message;
+        actual.data = message;
     } else {
         actual.statusCode = 200;
         actual.data = data;
