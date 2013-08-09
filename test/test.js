@@ -40,6 +40,10 @@ function isArray(value) {
     return false;
 }
 
+function isObject(value) {
+    return value && typeof value === 'object' && !isArray(value);
+};
+
 function addTests(tests, json) {
     for (var j = 0; j < json.tests.length; j++) {
         var test = json.tests[j];
@@ -229,17 +233,14 @@ function alterTable(test, callback) {
             q.params.dropColumns = params.drop_columns;
         }
 
-        // TODO: fix IF statement
-        if (isArray(params.alter_columns) === true) {
-            for (var i = 0; i < params.alter_columns.length; i++) {
-                q.alterColumn(params.alter_columns[i]);
+        if (isObject(params.alter_columns) === true && Object.keys(params.alter_columns).length > 0) {
+            for (var key in params.alter_columns) {
+                q.alterColumn(key, params.alter_columns[key]);
             }
         } else {
             // bypass functions to test invalid types
             q.params.alterColumns = params.alter_columns;
         }
-
-        q.alterColumn(params.alter_columns);
 
         var time = process.hrtime();
         client.query(q, function(err) {
