@@ -4,6 +4,7 @@ var dlanche = require('../lib');
 var fs = require('fs');
 var nconf = require('nconf');
 var path = require('path');
+var querystring = require('querystring');
 
 //
 // String extensions
@@ -164,19 +165,31 @@ function useRawQuery(keys, params) {
 
 // For testing unknown parameters. The API prevents users from adding
 // unknown parameters so we need to circumvent it.
-function queryRaw(type, url, body, callback) {
+function queryRaw(type, url, params, callback) {
 
     client.client.basicAuth(client.authKey, client.authSecret);
 
     if (type === 'del') {
+        // URL encode parameters
+        var str = querystring.stringify(params);
+        if (str) {
+            url += '?' + str;
+        }
+
         client.client.del(url, function(err, req, res, obj) {
             return callback(err, null);
         });
     } else if (type === 'post') {
-        client.client.post(url, body, function(err, req, res, obj) {
+        client.client.post(url, params, function(err, req, res, obj) {
             return callback(err, obj);
         });
     } else if (type === 'get') {
+        // URL encode parameters
+        var str = querystring.stringify(params);
+        if (str) {
+            url += '?' + str;
+        }
+
         client.client.get(url, function(err, req, res, obj) {
             return callback(err, obj);
         });
