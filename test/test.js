@@ -167,7 +167,7 @@ function useRawQuery(keys, params) {
 // unknown parameters so we need to circumvent it.
 function queryRaw(type, url, params, callback) {
 
-    client.client.basicAuth(client.authKey, client.authSecret);
+    client._httpClient.basicAuth(client._key, client._secret);
 
     if (type === 'del') {
         // URL encode parameters
@@ -176,12 +176,17 @@ function queryRaw(type, url, params, callback) {
             url += '?' + str;
         }
 
-        client.client.del(url, function(err, req, res, obj) {
-            return callback(err, null);
+        client._httpClient.del(url, function(err, req, res, obj) {
+            var result = client._getDebugInfo(req, res);
+            result.data = obj;
+            return callback(err, result);
         });
     } else if (type === 'post') {
-        client.client.post(url, params, function(err, req, res, obj) {
-            return callback(err, obj);
+        client._httpClient.post(url, params, function(err, req, res, obj) {
+            req.body = params;
+            var result = client._getDebugInfo(req, res);
+            result.data = obj;
+            return callback(err, result);
         });
     } else if (type === 'get') {
         // URL encode parameters
@@ -190,8 +195,10 @@ function queryRaw(type, url, params, callback) {
             url += '?' + str;
         }
 
-        client.client.get(url, function(err, req, res, obj) {
-            return callback(err, obj);
+        client._httpClient.get(url, function(err, req, res, obj) {
+            var result = client._getDebugInfo(req, res);
+            result.data = obj;
+            return callback(err, result);
         });
     } else {
         return callback(new Error('unsupported query type'), null);
@@ -217,8 +224,8 @@ function alterTable(test, callback) {
         'alter_columns',
     ];
 
-    client.authKey = params.key;
-    client.authSecret = params.secret;
+    client.key(params.key);
+    client.secret(params.secret);
 
     // Delete key and secret from params. They can screw up
     // raw query test and client's auth has already been set to them.
@@ -230,7 +237,7 @@ function alterTable(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('post', '/alter_table', params, function(err) {
+        queryRaw('post', '/alter_table', params, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
 
@@ -272,7 +279,7 @@ function alterTable(test, callback) {
         }
 
         var time = process.hrtime();
-        client.query(q, function(err) {
+        client.query(q, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
     }
@@ -290,8 +297,8 @@ function createTable(test, callback) {
         'columns',
     ];
 
-    client.authKey = params.key;
-    client.authSecret = params.secret;
+    client.key(params.key);
+    client.secret(params.secret);
 
     // Delete key and secret from params. They can screw up
     // raw query test and client's auth has already been set to them.
@@ -303,7 +310,7 @@ function createTable(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('post', '/create_table', params, function(err) {
+        queryRaw('post', '/create_table', params, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
 
@@ -318,7 +325,7 @@ function createTable(test, callback) {
         q.columns(params.columns);
 
         var time = process.hrtime();
-        client.query(q, function(err) {
+        client.query(q, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
     }
@@ -329,8 +336,8 @@ function dropTable(test, callback) {
     var params = test.parameters;
     var keys = [ 'name' ];
 
-    client.authKey = params.key;
-    client.authSecret = params.secret;
+    client.key(params.key);
+    client.secret(params.secret);
 
     // Delete key and secret from params. They can screw up
     // raw query test and client's auth has already been set to them.
@@ -342,7 +349,7 @@ function dropTable(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('del', '/drop_table', params, function(err) {
+        queryRaw('del', '/drop_table', params, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
 
@@ -352,7 +359,7 @@ function dropTable(test, callback) {
         q.dropTable(params.name);
 
         var time = process.hrtime();
-        client.query(q, function(err) {
+        client.query(q, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
     }
@@ -363,8 +370,8 @@ function deleteFrom(test, callback) {
     var params = test.parameters;
     var keys = [ 'name', 'where' ];
 
-    client.authKey = params.key;
-    client.authSecret = params.secret;
+    client.key(params.key);
+    client.secret(params.secret);
 
     // Delete key and secret from params. They can screw up
     // raw query test and client's auth has already been set to them.
@@ -376,7 +383,7 @@ function deleteFrom(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('post', '/delete_from', params, function(err) {
+        queryRaw('post', '/delete_from', params, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
 
@@ -386,7 +393,7 @@ function deleteFrom(test, callback) {
         q.deleteFrom(params.name).where(params.where);
 
         var time = process.hrtime();
-        client.query(q, function(err) {
+        client.query(q, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
     }
@@ -397,8 +404,8 @@ function getTableList(test, callback) {
     var params = test.parameters;
     var keys = [];
 
-    client.authKey = params.key;
-    client.authSecret = params.secret;
+    client.key(params.key);
+    client.secret(params.secret);
 
     // Delete key and secret from params. They can screw up
     // raw query test and client's auth has already been set to them.
@@ -410,7 +417,7 @@ function getTableList(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('get', '/get_table_list', params, function(err, list) {
+        queryRaw('get', '/get_table_list', params, function(err, result) {
 
             // getTableList() test is a bit different than the rest
             // because a server can have any number of tables. We test
@@ -421,8 +428,8 @@ function getTableList(test, callback) {
 
                 var tables = [];
                 
-                for (var i = 0; i < list.num_tables; i++) {
-                    var table = list.tables[i];
+                for (var i = 0; i < result.data.num_tables; i++) {
+                    var table = result.data.tables[i];
 
                     // too variable to test
                     delete table.last_updated;
@@ -436,11 +443,11 @@ function getTableList(test, callback) {
                     }
                 }
 
-                list.num_tables = tables.length;
-                list.tables = tables;
+                result.data.num_tables = tables.length;
+                result.data.tables = tables;
             }
 
-            return handleResult(time, test, err, list, callback);
+            return handleResult(time, test, err, result.data, callback);
         });
 
     } else {
@@ -449,7 +456,7 @@ function getTableList(test, callback) {
         q.getTableList();
 
         var time = process.hrtime();
-        client.query(q, function(err, list) {
+        client.query(q, function(err, result) {
 
             // getTableList() test is a bit different than the rest
             // because a server can have any number of tables. We test
@@ -460,8 +467,8 @@ function getTableList(test, callback) {
 
                 var tables = [];
                 
-                for (var i = 0; i < list.num_tables; i++) {
-                    var table = list.tables[i];
+                for (var i = 0; i < result.data.num_tables; i++) {
+                    var table = result.data.tables[i];
 
                     // too variable to test
                     delete table.last_updated;
@@ -475,11 +482,11 @@ function getTableList(test, callback) {
                     }
                 }
 
-                list.num_tables = tables.length;
-                list.tables = tables;
+                result.data.num_tables = tables.length;
+                result.data.tables = tables;
             }
 
-            return handleResult(time, test, err, list, callback);
+            return handleResult(time, test, err, result.data, callback);
         });
     }
 }
@@ -489,8 +496,8 @@ function getTableInfo(test, callback) {
     var params = test.parameters;
     var keys = [ 'name' ];
 
-    client.authKey = params.key;
-    client.authSecret = params.secret;
+    client.key(params.key);
+    client.secret(params.secret);
 
     // Delete key and secret from params. They can screw up
     // raw query test and client's auth has already been set to them.
@@ -502,15 +509,15 @@ function getTableInfo(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('get', '/get_table_info', params, function(err, data) {
+        queryRaw('get', '/get_table_info', params, function(err, result) {
 
             // Delete date/time properties since they are probably
             // different than the test data. This is okay because
             // the server sets these values on write operations.
-            delete data.when_created;
-            delete data.last_updated;
+            delete result.data.when_created;
+            delete result.data.last_updated;
 
-            return handleResult(time, test, err, data, callback);
+            return handleResult(time, test, err, result.data, callback);
         });
 
     } else {
@@ -519,15 +526,15 @@ function getTableInfo(test, callback) {
         q.getTableInfo(params.name);
 
         var time = process.hrtime();
-        client.query(q, function(err, data) {
+        client.query(q, function(err, result) {
 
             // Delete date/time properties since they are probably
             // different than the test data. This is okay because
             // the server sets these values on write operations.
-            delete data.when_created;
-            delete data.last_updated;
+            delete result.data.when_created;
+            delete result.data.last_updated;
 
-            return handleResult(time, test, err, data, callback);
+            return handleResult(time, test, err, result.data, callback);
         });
     }
 }
@@ -537,8 +544,8 @@ function insertInto(test, callback) {
     var params = test.parameters;
     var keys = [ 'name', 'values' ];
 
-    client.authKey = params.key;
-    client.authSecret = params.secret;
+    client.key(params.key);
+    client.secret(params.secret);
 
     // Delete key and secret from params. They can screw up
     // raw query test and client's auth has already been set to them.
@@ -550,7 +557,7 @@ function insertInto(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('post', '/insert_into', params, function(err) {
+        queryRaw('post', '/insert_into', params, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
 
@@ -564,7 +571,7 @@ function insertInto(test, callback) {
                 q.values(rows);
 
                 var time = process.hrtime();
-                client.query(q, function(err) {
+                client.query(q, function(err, result) {
                     return handleResult(time, test, err, null, callback);
                 });
             });
@@ -572,7 +579,7 @@ function insertInto(test, callback) {
             q.values(params.values);
 
             var time = process.hrtime();
-            client.query(q, function(err) {
+            client.query(q, function(err, result) {
                 return handleResult(time, test, err, null, callback);
             });
         }
@@ -594,8 +601,8 @@ function selectFrom(test, callback) {
         'total',
     ];
 
-    client.authKey = params.key;
-    client.authSecret = params.secret;
+    client.key(params.key);
+    client.secret(params.secret);
 
     // Delete key and secret from params. They can screw up
     // raw query test and client's auth has already been set to them.
@@ -607,8 +614,8 @@ function selectFrom(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('post', '/select_from', params, function(err, data) {
-            return handleResult(time, test, err, data, callback);
+        queryRaw('post', '/select_from', params, function(err, result) {
+            return handleResult(time, test, err, result.data, callback);
         });
 
     } else {
@@ -625,8 +632,8 @@ function selectFrom(test, callback) {
         q.total(params.total);
 
         var time = process.hrtime();
-        client.query(q, function(err, data) {
-            return handleResult(time, test, err, data, callback);
+        client.query(q, function(err, result) {
+            return handleResult(time, test, err, result.data, callback);
         });
     }
 }
@@ -636,8 +643,8 @@ function update(test, callback) {
     var params = test.parameters;
     var keys = [ 'name', 'set', 'where' ];
 
-    client.authKey = params.key;
-    client.authSecret = params.secret;
+    client.key(params.key);
+    client.secret(params.secret);
 
     // Delete key and secret from params. They can screw up
     // raw query test and client's auth has already been set to them.
@@ -649,7 +656,7 @@ function update(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('post', '/update', params, function(err) {
+        queryRaw('post', '/update', params, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
 
@@ -661,7 +668,7 @@ function update(test, callback) {
         q.where(params.where);
 
         var time = process.hrtime();
-        client.query(q, function(err) {
+        client.query(q, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
     }

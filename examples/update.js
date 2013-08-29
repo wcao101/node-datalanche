@@ -18,12 +18,12 @@ q.set({
 });
 q.where(e);
 
-client.query(q, function(err) {
+client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log('rows updated in my_table');
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();

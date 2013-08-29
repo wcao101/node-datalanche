@@ -8,12 +8,12 @@ var client = new dl.Client({
 var q = new dl.Query();
 q.dropTable('my_table');
 
-client.query(q, function(err) {
+client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log('my_table has been dropped/deleted');
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();

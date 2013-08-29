@@ -25,12 +25,12 @@ q.values([
     }
 ]);
 
-client.query(q, function(err) {
+client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log('rows inserted into my_table');
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();

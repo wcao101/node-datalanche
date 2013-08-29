@@ -44,12 +44,12 @@ q.alterColumn('col1', {
     data_type: 'string'
 });
 
-client.query(q, function(err) {
+client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log('my_table has been altered');
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();
