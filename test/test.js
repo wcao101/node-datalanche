@@ -213,7 +213,7 @@ function alterTable(test, callback) {
 
     var params = test.parameters;
     var keys = [
-        'name',
+        'table_name',
         'rename',
         'description',
         'is_private',
@@ -244,7 +244,7 @@ function alterTable(test, callback) {
     } else {
 
         var q = new dlanche.Query();
-        q.alterTable(params.name);
+        q.alterTable(params.table_name);
         q.rename(params.rename);
         q.description(params.description);
         q.isPrivate(params.is_private);
@@ -289,7 +289,7 @@ function createTable(test, callback) {
 
     var params = test.parameters;
     var keys = [
-        'name',
+        'table_name',
         'description',
         'is_private',
         'license',
@@ -317,7 +317,7 @@ function createTable(test, callback) {
     } else {
 
         var q = new dlanche.Query();
-        q.createTable(params.name);
+        q.createTable(params.table_name);
         q.description(params.description);
         q.isPrivate(params.is_private);
         q.license(params.license);
@@ -334,7 +334,7 @@ function createTable(test, callback) {
 function dropTable(test, callback) {
 
     var params = test.parameters;
-    var keys = [ 'name' ];
+    var keys = [ 'table_name' ];
 
     client.key(params.key);
     client.secret(params.secret);
@@ -356,7 +356,7 @@ function dropTable(test, callback) {
     } else {
 
         var q = new dlanche.Query();
-        q.dropTable(params.name);
+        q.dropTable(params.table_name);
 
         var time = process.hrtime();
         client.query(q, function(err, result) {
@@ -368,7 +368,7 @@ function dropTable(test, callback) {
 function deleteFrom(test, callback) {
 
     var params = test.parameters;
-    var keys = [ 'name', 'where' ];
+    var keys = [ 'table_name', 'where' ];
 
     client.key(params.key);
     client.secret(params.secret);
@@ -390,7 +390,7 @@ function deleteFrom(test, callback) {
     } else {
 
         var q = new dlanche.Query();
-        q.deleteFrom(params.name).where(params.where);
+        q.deleteFrom(params.table_name).where(params.where);
 
         var time = process.hrtime();
         client.query(q, function(err, result) {
@@ -494,7 +494,7 @@ function getTableList(test, callback) {
 function getTableInfo(test, callback) {
 
     var params = test.parameters;
-    var keys = [ 'name' ];
+    var keys = [ 'table_name' ];
 
     client.key(params.key);
     client.secret(params.secret);
@@ -523,7 +523,7 @@ function getTableInfo(test, callback) {
     } else {
 
         var q = new dlanche.Query();
-        q.getTableInfo(params.name);
+        q.getTableInfo(params.table_name);
 
         var time = process.hrtime();
         client.query(q, function(err, result) {
@@ -542,7 +542,7 @@ function getTableInfo(test, callback) {
 function insertInto(test, callback) {
 
     var params = test.parameters;
-    var keys = [ 'name', 'values' ];
+    var keys = [ 'table_name', 'values' ];
 
     client.key(params.key);
     client.secret(params.secret);
@@ -564,7 +564,7 @@ function insertInto(test, callback) {
     } else {
 
         var q = new dlanche.Query();
-        q.insertInto(params.name);
+        q.insertInto(params.table_name);
 
         if (params.values === 'dataset_file') {
             getRowsFromFile(testDatasetPath, function(rows) {
@@ -641,7 +641,7 @@ function selectFrom(test, callback) {
 function update(test, callback) {
 
     var params = test.parameters;
-    var keys = [ 'name', 'set', 'where' ];
+    var keys = [ 'table_name', 'set', 'where' ];
 
     client.key(params.key);
     client.secret(params.secret);
@@ -663,7 +663,7 @@ function update(test, callback) {
     } else {
 
         var q = new dlanche.Query();
-        q.update(params.name);
+        q.update(params.table_name);
         q.set(params.set);
         q.where(params.where);
 
