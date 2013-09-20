@@ -30,7 +30,7 @@ client.query(q, function(err, result) {
     if (err) {
         console.log(err);
     } else {
-        console.log(JSON.stringify(result, null, '  '));
+        console.log('insert_into succeeded!');
     }
 
     return client.close();

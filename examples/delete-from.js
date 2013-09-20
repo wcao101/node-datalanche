@@ -20,7 +20,7 @@ client.query(q, function(err, result) {
     if (err) {
         console.log(err);
     } else {
-        console.log(JSON.stringify(result, null, '  '));
+        console.log('delete_from succeeded!');
     }
 
     return client.close();

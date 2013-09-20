@@ -1,8 +1,8 @@
-var dlanche = require('../lib');
+var dl = require('../lib');
 
-var client = dl.createClient({
+var client = new dl.Client({
     key: '',    // Add your API key.
-    secret: ''  // Add your API secret.
+    secret: '',  // Add your API secret.
 });
 
 var e = new dl.Expression();
@@ -22,7 +22,7 @@ client.query(q, function(err, result) {
     if (err) {
         console.log(err);
     } else {
-        console.log(JSON.stringify(result, null, '  '));
+        console.log(JSON.stringify(result.data, null, '  '));
     }
 
     return client.close();
