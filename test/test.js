@@ -352,7 +352,7 @@ function dropTable(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('del', '/drop_table', params, function(err, result) {
+        queryRaw('post', '/drop_table', params, function(err, result) {
             return handleResult(time, test, err, null, callback);
         });
 
@@ -418,7 +418,7 @@ function getTableList(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('get', '/get_table_list', params, function(err, result) {
+        queryRaw('post', '/get_table_list', params, function(err, result) {
 
             // getTableList() test is a bit different than the rest
             // because a server can have any number of tables. We test
@@ -509,7 +509,7 @@ function getTableInfo(test, callback) {
     if (useRaw === true) {
 
         var time = process.hrtime();
-        queryRaw('get', '/get_table_info', params, function(err, result) {
+        queryRaw('post', '/get_table_info', params, function(err, result) {
 
             // Delete date/time properties since they are probably
             // different than the test data. This is okay because
