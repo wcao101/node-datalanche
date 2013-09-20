@@ -28,8 +28,5 @@
         "restify": "2.4.1"
     },
     "devDependencies": {
-        "async": "0.2.7",
-        "csv": "0.3.0",
-        "nconf": "0.6.7"
     }
 }
