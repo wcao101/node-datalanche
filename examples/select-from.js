@@ -1,20 +1,17 @@
 var dl = require('../lib');
 
-var client = dl.createClient({
-    key: '',    // Add your API key.
-    secret: ''  // Add your API secret.
+var client = new dl.Client({
+    key: 'YOUR_API_KEY',
+    secret: 'YOUR_API_SECRET'
 });
 
-var e = new dl.Expression();
-e.column('col3').contains('hello');
-
 var q = new dl.Query();
-q.select([ 'col1', 'col2' ]); // if you want all columns use q.select('*')
+q.select([ 'col1', 'col2' ]);
 q.from('my_table');
-q.where(e);
+q.where(q.expr(q.column('col3'), '$like', '%hello%'));
 q.orderBy([
-    { col1: '$asc' },
-    { col2: '$desc' },
+    q.expr(q.column('col1'), '$asc'),
+    q.expr(q.column('col2'), '$desc')
 ]);
 q.offset(0);
 q.limit(10);

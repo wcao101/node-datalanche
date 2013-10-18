@@ -1,51 +1,62 @@
 var dl = require('../lib');
 
 var client = new dl.Client({
-    key: '',    // Add your API key.
-    secret: '',  // Add your API secret.
+    key: 'YOUR_API_KEY',
+    secret: 'YOUR_API_SECRET'
 });
 
-// Only q.createTable() is required. The rest are optional
-// and the server will set defaults.
+var definition = {
+    schema_name: 'my_schema',
+    table_name: 'my_table',
+    description: 'my_table description text',
+    is_private: true,
+    license: {
+        name: 'public domain',
+        description: 'this table is public domain',
+        url: null
+    },
+    sources: {
+        source1: {
+            url: 'http://source1.com',
+            description: 'source1 description text'
+        },
+        source2: {
+            url: 'http://source2.com',
+            description: 'source2 description text'
+        }
+    },
+    columns: {
+        col1: {
+            data_type: 'uuid',
+            description: 'col1 description text',
+            not_null: true
+        },
+        col2: {
+            data_type: 'text',
+            description: 'col2 description text',
+            default_value: null,
+            not_null: false
+        },
+        col3: {
+            data_type: 'integer',
+            description: 'col3 description text',
+            default_value: 0,
+            not_null: true
+        }
+    },
+    constraints: {
+        primary_key: 'col1'
+    },
+    indexes: {},
+    collaborators: {
+        bob: 'read',
+        slob: 'read/write',
+        knob: 'admin'
+    }
+};
 
 var q = new dl.Query();
-q.createTable('my_table');
-q.description('my_table description text');
-q.isPrivate(true);
-q.license({
-    name: 'license name',
-    url: 'http://license.com',
-    description: 'license description text'
-});
-q.sources([
-    {
-        name: 'source1',
-        url: 'http://source1.com',
-        description: 'source1 description text'
-    },
-    {
-        name: 'source2',
-        url: 'http://source2.com',
-        description: 'source2 description text'
-    },
-]);
-q.columns([
-    {
-        name: 'col1',
-        data_type: 'uuid',
-        description: 'col1 description text'
-    },
-    {
-        name: 'col2',
-        data_type: 'timestamp',
-        description: 'col2 description text'
-    },
-    {
-        name: 'col3',
-        data_type: 'string',
-        description: 'col3 description text'
-    }
-]);
+q.createTable(definition);
 
 client.query(q, function(err, result) {
 
