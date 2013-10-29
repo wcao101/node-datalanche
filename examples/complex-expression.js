@@ -15,12 +15,12 @@ var q = new dl.Query();
 
 var e = q.expr(
     q.expr(
-        q.column('col3'), '$=', 'hello',
+        q.column('col3'), '=', 'hello',
         '$or',
-        q.column('col3'), '$=', 'world'
+        q.column('col3'), '=', 'world'
     ),
     '$and',
-    q.column('col1'), '$=', '0f21b968-cd28-4d8b-9ea6-33dbcd517ec5',
+    q.column('col1'), '=', '0f21b968-cd28-4d8b-9ea6-33dbcd517ec5',
 );
 
 q.select('*').from('my_schema.my_table').where(e);

@@ -15,7 +15,7 @@ q.update('my_schema.my_table');
 q.set({
     col3: 'hello world'
 });
-q.where(q.expr(q.column('col3'), '$=', 'hello'));
+q.where(q.expr(q.column('col3'), '=', 'hello'));
 
 client.query(q, function(err, result) {
 

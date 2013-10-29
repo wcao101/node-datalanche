@@ -12,7 +12,7 @@ var client = new dl.Client({
 
 var q = new dl.Query();
 q.deleteFrom('my_schema.my_table');
-q.where(q.expr(q.column('col3'), '$=', 'hello'));
+q.where(q.expr(q.column('col3'), '=', 'hello'));
 
 client.query(q, function(err, result) {
 
