@@ -1,19 +1,18 @@
+//
+// equivalent SQL
+//
+// DELETE FROM my_schema.my_table WHERE col3 = 'hello';
+//
 var dl = require('../lib');
 
 var client = new dl.Client({
-    key: '',    // Add your API key.
-    secret: '',  // Add your API secret.
+    key: 'YOUR_API_KEY',
+    secret: 'YOUR_API_SECRET'
 });
 
-// q.where() is optional however all rows will be deleted
-// from the table if missing.
-
-var e = new dl.Expression();
-e.column('col3').equals('hello');
-
 var q = new dl.Query();
-q.deleteFrom('my_table');
-q.where(e);
+q.deleteFrom('my_schema.my_table');
+q.where(q.expr(q.column('col3'), '$=', 'hello'));
 
 client.query(q, function(err, result) {
 

@@ -1,21 +1,29 @@
+//
+// equivalent SQL
+//
+// SELECT * FROM my_schema.my_table
+//     WHERE (col3 = 'hello' OR col3 = 'world') AND col1 = '0f21b968-cd28-4d8b-9ea6-33dbcd517ec5';
+//
 var dl = require('../lib');
 
 var client = new dl.Client({
-    key: '',    // Add your API key.
-    secret: '',  // Add your API secret.
+    key: 'YOUR_API_KEY',
+    secret: 'YOUR_API_SECRET'
 });
 
-var e = new dl.Expression();
-e.boolAnd([
-    new dl.Expression().boolOr([
-        new dl.Expression().column('col3').equals('hello'),
-        new dl.Expression().column('col3').equals('world')
-    ]),
-    new dl.Expression().column('col1').equals('0f21b968-cd28-4d8b-9ea6-33dbcd517ec5')
-]);
-
 var q = new dl.Query();
-q.select('*').from('my_table').where(e);
+
+var e = q.expr(
+    q.expr(
+        q.column('col3'), '$=', 'hello',
+        '$or',
+        q.column('col3'), '$=', 'world'
+    ),
+    '$and',
+    q.column('col1'), '$=', '0f21b968-cd28-4d8b-9ea6-33dbcd517ec5',
+);
+
+q.select('*').from('my_schema.my_table').where(e);
 
 client.query(q, function(err, result) {
 

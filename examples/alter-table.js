@@ -1,18 +1,37 @@
+//
+// equivalent SQL assuming createTable() example called first
+//
+// BEGIN TRANSACTION;
+//
+// ALTER TABLE my_schema.my_table
+//     DROP COLUMN col2,
+//     ALTER COLUMN col1 DROP NOT NULL,
+//     ALTER COLUMN col1 SET DATA TYPE text,
+//     ADD COLUMN new_col integer;
+//
+// ALTER TABLE my_schema.my_table RENAME COLUMN col3 TO col_renamed;
+//
+// ALTER TABLE my_schema.my_table RENAME TO my_new_table;
+//
+// ALTER TABLE my_schema.my_new_table SET SCHEMA my_new_schema;
+//
+// COMMIT;
+//
 var dl = require('../lib');
 
 var client = new dl.Client({
-    key: '',    // Add your API key.
-    secret: '',  // Add your API secret.
+    key: 'YOUR_API_KEY',
+    secret: 'YOUR_API_SECRET'
 });
 
-// Only q.alterTable() is required. The rest are optional and, if present,
-// will override current values. However add/drop/alter columns are broken
-// up into individual functions and will do the appropriate function. Note
-// that dropping or altering columns of an existing table can delete existing data.
-
 var q = new dl.Query();
-q.alterTable('my_table');
-q.rename('my_new_table');
+q.alterTable('my_schema.my_table');
+
+// modify table schema and name
+q.setSchema('my_new_schema');
+q.renameTo('my_new_table');
+
+// modify metadata
 q.description('my_new_table description text');
 q.isPrivate(false);
 q.license({
@@ -20,29 +39,35 @@ q.license({
     url: 'http://new_license.com',
     description: 'new license description text'
 });
-q.sources([
-    {
-        name: 'new source1',
-        url: 'http://new_source1.com',
-        description: 'new source1 description text'
-    },
-    {
-        name: 'new source2',
-        url: 'http://new_source2.com',
-        description: 'new source2 description text'
-    },
-]);
-q.addColumn({
-    name: 'new_col',
-    data_type: 'int32',
+
+// modify data sources
+q.addSource('newSource1', {
+    url: 'http://new_source1.com',
+    description: 'new source1 description text'
+});
+q.alterSource('source1', {
+    url: 'http://new_source1.com',
+    description: 'new source1 description text'
+});
+q.dropSource('source2');
+q.renameSource('source1', 'source1_renamed');
+
+// modify columns
+q.addColumn('new_col', {
+    data_type: 'integer',
     description: 'new_col description text'
 });
-q.dropColumn('col2');
-q.dropColumn('col3');
 q.alterColumn('col1', {
-    // will only alter col1's data type
-    data_type: 'string'
+    data_type: 'text',
+    description: 'new col1 description text'
 });
+q.dropColumn('col2');
+q.renameColumn('col3', 'col_renamed');
+
+// modify collaborators
+q.addCollaborator('new_bob', 'read/write');
+q.alterCollaborator('knob', 'read');
+q.dropCollaborator('slob');
 
 client.query(q, function(err, result) {
 

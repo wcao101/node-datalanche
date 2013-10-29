@@ -1,12 +1,17 @@
+//
+// equivalent SQL
+//
+// DROP TABLE my_schema.my_table;
+//
 var dl = require('../lib');
 
 var client = new dl.Client({
-    key: '',    // Add your API key.
-    secret: '',  // Add your API secret.
+    key: 'YOUR_API_KEY',
+    secret: 'YOUR_API_SECRET'
 });
 
 var q = new dl.Query();
-q.dropTable('my_table');
+q.dropTable('my_schema.my_table');
 
 client.query(q, function(err, result) {
 

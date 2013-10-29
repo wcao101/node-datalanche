@@ -1,22 +1,21 @@
+//
+// equivalent SQL
+//
+// UPDATE my_schema.my_table SET col3 = 'hello world' WHERE col3 = 'hello';
+//
 var dl = require('../lib');
 
 var client = new dl.Client({
-    key: '',    // Add your API key.
-    secret: '',  // Add your API secret.
+    key: 'YOUR_API_KEY',
+    secret: 'YOUR_API_SECRET'
 });
 
-// q.where() is optional however all rows in the table
-// will be updated if missing.
-
-var e = new dl.Expression();
-e.column('col3').equals('hello');
-
 var q = new dl.Query();
-q.update('my_table');
+q.update('my_schema.my_table');
 q.set({
     col3: 'hello world'
 });
-q.where(e);
+q.where(q.expr(q.column('col3'), '$=', 'hello'));
 
 client.query(q, function(err, result) {
 

@@ -1,3 +1,12 @@
+//
+// equivalent SQL
+//
+// CREATE TABLE my_schema.my_table(
+//     col1 uuid NOT NULL,
+//     col2 text,
+//     col3 integer DEFAULT 0 NOT NULL
+// );
+//
 var dl = require('../lib');
 
 var client = new dl.Client({
@@ -47,7 +56,8 @@ var definition = {
     constraints: {
         primary_key: 'col1'
     },
-    indexes: {},
+    indexes: {
+    },
     collaborators: {
         bob: 'read',
         slob: 'read/write',
