@@ -1,7 +1,5 @@
 //
-// equivalent SQL
-//
-// DROP TABLE my_schema.my_table;
+// Show all databases you have access to.
 //
 var dl = require('../lib');
 
@@ -11,14 +9,14 @@ var client = new dl.Client({
 });
 
 var q = new dl.Query();
-q.dropTable('my_schema.my_table');
+q.showDatabases();
 
 client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log('drop_table succeeded!');
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();

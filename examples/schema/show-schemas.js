@@ -1,7 +1,5 @@
 //
-// equivalent SQL
-//
-// UPDATE my_schema.my_table SET col3 = 'hello world' WHERE col3 = 'hello';
+// Show all schemas you have access to.
 //
 var dl = require('../lib');
 
@@ -11,18 +9,14 @@ var client = new dl.Client({
 });
 
 var q = new dl.Query();
-q.update('my_schema.my_table');
-q.set({
-    col3: 'hello world'
-});
-q.where(q.expr(q.column('col3'), '=', 'hello'));
+q.showSchemas();
 
 client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log('update succeeded!');
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();

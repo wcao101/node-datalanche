@@ -1,18 +1,12 @@
 //
-// equivalent SQL
+// Select rows from the given table. Must have read access for the given database.
 //
-// BEGIN TRANSACTION READ ONLY;
-//
-// SELECT col1, col2
+// equivalent SQL:
+// SELECT DISTINCT col1, col2
 //     FROM my_schema.my_table
 //     WHERE col3 LIKE '%hello%'
 //     ORDER BY col1 ASC, col2 DESC
 //     OFFSET 0 LIMIT 10;
-//
-// if total = true
-// SELECT COUNT(*) FROM my_schema.my_table WHERE col3 LIKE '%hello%';
-//
-// COMMIT;
 //
 var dl = require('../lib');
 
@@ -21,8 +15,9 @@ var client = new dl.Client({
     secret: 'YOUR_API_SECRET'
 });
 
-var q = new dl.Query();
+var q = new dl.Query('my_database');
 q.select([ 'col1', 'col2' ]);
+q.distinct(true);
 q.from('my_schema.my_table');
 q.where(q.expr(q.column('col3'), '$like', '%hello%'));
 q.orderBy([
@@ -31,14 +26,13 @@ q.orderBy([
 ]);
 q.offset(0);
 q.limit(10);
-q.total(true);
 
 client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log(JSON.stringify(result.data, null, '  '));
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();

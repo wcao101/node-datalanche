@@ -1,6 +1,7 @@
 //
-// equivalent SQL
+// Insert rows into the given table. Must have write access for the given database.
 //
+// equivalent SQL:
 // INSERT INTO my_schema.my_table (col1, col2, col3)
 //     VALUES
 //     ( '0f21b968-cd28-4d8b-9ea6-33dbcd517ec5', '2012-11-13T01:04:33.389Z', 'hello' ),
@@ -14,7 +15,7 @@ var client = new dl.Client({
     secret: 'YOUR_API_SECRET'
 });
 
-var q = new dl.Query();
+var q = new dl.Query('my_database');
 q.insertInto('my_schema.my_table');
 q.values([
     {
@@ -39,7 +40,7 @@ client.query(q, function(err, result) {
     if (err) {
         console.log(err);
     } else {
-        console.log('insert_into succeeded!');
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();

@@ -1,3 +1,6 @@
+//
+// Show all tables you have access to.
+//
 var dl = require('../lib');
 
 var client = new dl.Client({
@@ -6,14 +9,14 @@ var client = new dl.Client({
 });
 
 var q = new dl.Query();
-q.getTableList();
+q.showTables();
 
 client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
     } else {
-        console.log(JSON.stringify(result.data, null, '  '));
+        console.log(JSON.stringify(result, null, '  '));
     }
 
     return client.close();
