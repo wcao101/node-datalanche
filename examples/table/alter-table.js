@@ -25,15 +25,9 @@ var client = new dl.Client({
 
 var q = new dl.Query('my_database');
 q.alterTable('my_schema.my_table');
-
-// modify table schema and name
 q.setSchema('my_new_schema');
 q.renameTo('my_new_table');
-
-// modify metadata
 q.description('my_new_table description text');
-
-// modify columns
 q.addColumn('new_col', {
     data_type: {
         name: 'integer'
