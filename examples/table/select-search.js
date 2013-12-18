@@ -15,7 +15,7 @@ var client = new dl.Client({
 });
 
 var q = new dl.Query('my_database');
-q.select('*').from('my_schema.my_table').search('hello world');
+q.selectAll().from('my_schema.my_table').search('hello world');
 
 client.query(q, function(err, result) {
 
