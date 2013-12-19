@@ -5,7 +5,7 @@ Official Node.js client for [Datalanche](https://www.datalanche.com).
 
 ## Install
 
-[Create an account](https://www.datalanche.com/signup) and obtain an API key and secret. Then install the client using the
+[Create an account](https://www.datalanche.com/account/signup) and obtain an API key and secret. Then install the client using the
  following command:
 
     npm install datalanche
