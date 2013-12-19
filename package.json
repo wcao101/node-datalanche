@@ -5,8 +5,8 @@
     },
     "name": "datalanche",
     "homepage": "https://github.com/datalanche/node-datalanche",
-    "description": "Official Node.js client for Datalanche REST API.",
-    "version": "0.1.0",
+    "description": "Official Node.js client for Datalanche.",
+    "version": "0.8.1",
     "repository": {
         "type": "git",
         "url": "https://github.com/datalanche/node-datalanche.git"
