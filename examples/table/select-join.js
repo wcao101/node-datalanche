@@ -6,7 +6,7 @@
 //     JOIN t2 ON t1.c1 = t2.c1
 //     JOIN t3 ON t1.c1 = t3.c1
 //
-var dl = require('../lib');
+var dl = require('../../lib');
 
 var client = new dl.Client({
     key: 'YOUR_API_KEY',
@@ -28,6 +28,4 @@ client.query(q, function(err, result) {
     } else {
         console.log(JSON.stringify(result, null, '  '));
     }
-
-    return client.close();
 });

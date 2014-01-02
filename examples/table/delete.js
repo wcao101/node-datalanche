@@ -4,7 +4,7 @@
 // equivalent SQL:
 // DELETE FROM my_schema.my_table WHERE col3 = 'hello';
 //
-var dl = require('../lib');
+var dl = require('../../lib');
 
 var client = new dl.Client({
     key: 'YOUR_API_KEY',
@@ -22,6 +22,4 @@ client.query(q, function(err, result) {
     } else {
         console.log(JSON.stringify(result, null, '  '));
     }
-
-    return client.close();
 });

@@ -4,8 +4,8 @@
 var dl = require('../../lib');
 
 var client = new dl.Client({
-    key: 'TZeSCqF4Q86AuDm6da2aSQ==',
-    secret: '432IzS/ERcuNlSIMv0+9Mg=='
+    key: 'YOUR_API_KEY',
+    secret: 'YOUR_API_SECRET'
 });
 
 var q = new dl.Query();

@@ -4,7 +4,7 @@
 // equivalent SQL:
 // ALTER SCHEMA my_schema RENAME TO my_new_schema;
 //
-var dl = require('../lib');
+var dl = require('../../lib');
 
 var client = new dl.Client({
     key: 'YOUR_API_KEY',
@@ -23,6 +23,4 @@ client.query(q, function(err, result) {
     } else {
         console.log('alter_schema succeeded!');
     }
-
-    return client.close();
 });

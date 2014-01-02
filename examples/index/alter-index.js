@@ -4,7 +4,7 @@
 // equivalent SQL:
 // ALTER INDEX my_schema.my_index RENAME TO my_new_index;
 //
-var dl = require('../lib');
+var dl = require('../../lib');
 
 var client = new dl.Client({
     key: 'YOUR_API_KEY',
@@ -22,6 +22,4 @@ client.query(q, function(err, result) {
     } else {
         console.log('alter_index succeeded!');
     }
-
-    return client.close();
 });
