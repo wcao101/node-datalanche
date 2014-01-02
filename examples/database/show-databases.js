@@ -1,11 +1,11 @@
 //
 // Show all databases you have access to.
 //
-var dl = require('../lib');
+var dl = require('../../lib');
 
 var client = new dl.Client({
-    key: 'YOUR_API_KEY',
-    secret: 'YOUR_API_SECRET'
+    key: 'TZeSCqF4Q86AuDm6da2aSQ==',
+    secret: '432IzS/ERcuNlSIMv0+9Mg=='
 });
 
 var q = new dl.Query();
@@ -18,6 +18,4 @@ client.query(q, function(err, result) {
     } else {
         console.log(JSON.stringify(result, null, '  '));
     }
-
-    return client.close();
 });
