@@ -1,3 +1,4 @@
 #!/bin/bash
 
-npm publish .
+find . -type f -name "*~" -exec rm -f {} \;
+#npm publish .
