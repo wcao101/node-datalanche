@@ -7,14 +7,11 @@
 var dl = require('../../lib');
 
 var client = new dl.Client({
-    key: 'Uf88KldyReS95p4WqplE7w==',
-    secret: 'OXPlXrBuSHuQdtDEU0bIkw==',
-    host: 'localhost',
-    port: 4001,
-    verifySsl: false
+    key: 'YOUR_API_KEY',
+    secret: 'YOUR_API_SECRET'
 });
 
-var q = new dl.Query('test_database');
+var q = new dl.Query('my_database');
 q.createSchema('my_schema');
 q.description('my_schema description text');
 

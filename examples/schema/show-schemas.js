@@ -8,7 +8,7 @@ var client = new dl.Client({
     secret: 'YOUR_API_SECRET'
 });
 
-var q = new dl.Query();
+var q = new dl.Query('my_database');
 q.showSchemas();
 
 client.query(q, function(err, result) {
