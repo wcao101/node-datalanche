@@ -8,11 +8,19 @@
 //     ( '8bf38716-95ef-4a58-9c1b-b7c0f3185746', '2012-07-26T01:09:04.140Z', 'world' ),
 //     ( '45db0793-3c99-4e0d-b1d0-43ab875638d3', '2012-11-30T07:10:36.871Z', 'hello world' );
 //
+var fs = require('fs');
 var dl = require('../../lib');
 
+var config = fs.readFileSync('../config.json');
+config = JSON.parse(config.toString());
+
+// Please find your API credentials here: https://www.datalanche.com/account before use
+var YOUR_API_KEY = config.api_key;
+var YOUR_API_SECRET = config.api_secret;
+
 var client = new dl.Client({
-    key: 'YOUR_API_KEY',
-    secret: 'YOUR_API_SECRET'
+    key: YOUR_API_KEY,
+    secret: YOUR_API_SECRET
 });
 
 var q = new dl.Query('my_database');

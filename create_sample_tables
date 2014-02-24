@@ -1,0 +1,54 @@
+#!/bin/bash
+echo rename the table my_table to t1
+# make sure the previous alterred schemas are cleaned up before examples testing
+curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
+                        "alter_table": "my_schema.my_table",
+			"rename_to": "t1"
+                      }'
+
+echo
+echo create a new table with the name of my_table
+node ../table/create-table.js
+
+echo
+echo insert data into my_table
+node ../table/insert.js
+
+echo rename the table my_table to t2
+# make sure the previous alterred schemas are cleaned up before examples testing
+curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
+                        "alter_table": "my_schema.my_table",
+			"rename_to": "t2"
+                      }'
+
+echo
+echo create a new table with the name of my_table
+node ../table/create-table.js
+
+echo
+echo insert data into my_table
+node ../table/insert.js
+
+echo
+echo rename the table my_table to t3
+# make sure the previous alterred schemas are cleaned up before examples testing
+curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
+                        "alter_table": "my_schema.my_table",
+			"rename_to": "t3"
+                      }'
+
+echo
+echo create a new schema named my_new_schema
+curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -H "Content-Type: application/json" -d '{
+                                "create_schema": "my_new_schema",
+                                "description": "An optional description of my_new_schema."
+                              }'
+
+
+echo
+echo create a new table with the name of my_table
+node ../table/create-table.js
+
+echo
+echo insert data into my_table
+node ../table/insert.js
