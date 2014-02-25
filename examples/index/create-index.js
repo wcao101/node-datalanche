@@ -23,7 +23,7 @@ var q = new dl.Query('my_database');
 q.createIndex('my_index');
 q.unique(true);
 q.onTable('my_schema.my_table');
-q.method('btree');
+q.usingMethod('btree');
 q.columns([ 'col1', 'col2' ]);
 
 client.query(q, function(err, result) {
