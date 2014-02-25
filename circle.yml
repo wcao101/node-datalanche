@@ -4,6 +4,9 @@ machine:
   timezone:
     UTC # Set the timezone to UTC
 
+  hosts: # specified the api.datalanche.com server
+    api.datalanche.com: 50.19.4.47
+
   # Version of nodejs to use
   node:
     version: 0.10.23
