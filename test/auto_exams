@@ -7,7 +7,7 @@ npm install
 
 # cd into the examples/schema subdirectory to match the config.json on the example
 # file
-cd ./examples/schema
+cd ../examples/schema
 
 echo
 echo Make sure the previous databases name is changed back to my_database
