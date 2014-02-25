@@ -12,4 +12,4 @@ machine:
 test:
   override:
     # run the auto_exam bash script to test examples automatically
-    - bash -c "sh auto_exams"
+    - bash -c "cd test/; sh auto_exams"
