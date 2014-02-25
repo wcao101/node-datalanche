@@ -8,10 +8,6 @@ machine:
   node:
     version: 0.10.23
 
-  # setup the right setup_tools for installing datalanche
-  post:
-    - npm install
-
 ## Customize test commands
 test:
   override:
