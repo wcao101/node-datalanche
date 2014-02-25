@@ -10,7 +10,7 @@ machine:
 
   # setup the right setup_tools for installing datalanche
   post:
-    npm install
+    - npm install
 
 ## Customize test commands
 test:
