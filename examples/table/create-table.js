@@ -8,11 +8,19 @@
 //     col3 integer DEFAULT 0 NOT NULL
 // );
 //
+var fs = require('fs');
 var dl = require('../../lib');
 
+var config = fs.readFileSync('../config.json');
+config = JSON.parse(config.toString());
+
+// Please find your API credentials here: https://www.datalanche.com/account before use
+var YOUR_API_KEY = config.api_key;
+var YOUR_API_SECRET = config.api_secret;
+
 var client = new dl.Client({
-    key: 'YOUR_API_KEY',
-    secret: 'YOUR_API_SECRET'
+    key: YOUR_API_KEY,
+    secret: YOUR_API_SECRET
 });
 
 var q = new dl.Query('my_database');
@@ -28,7 +36,7 @@ q.columns({
     },
     col2: {
         data_type: {
-            name: 'varchar',
+            name: 'timestamptz',
             args: [ 50 ]
         },
         description: 'col2 description text',
@@ -37,11 +45,20 @@ q.columns({
     },
     col3: {
         data_type: {
-            name: 'integer'
+            name: 'text'
         },
         description: 'col3 description text',
         default_value: 0,
         not_null: true
+    },
+    col4: {
+        data_type: {
+            name: 'varchar',
+            args: [ 50 ]
+        },
+        description: 'col4 description text',
+        default_value: null,
+        not_null: false
     }
 });
 

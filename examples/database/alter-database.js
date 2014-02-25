@@ -4,11 +4,19 @@
 // equivalent SQL:
 // ALTER DATABASE my_database RENAME TO my_new_database;
 //
+var fs = require('fs');
 var dl = require('../../lib');
 
+var config = fs.readFileSync('../config.json');
+config = JSON.parse(config.toString());
+
+// Please find your API credentials here: https://www.datalanche.com/account before use
+var YOUR_API_KEY = config.api_key;
+var YOUR_API_SECRET = config.api_secret;
+
 var client = new dl.Client({
-    key: 'YOUR_API_KEY',
-    secret: 'YOUR_API_SECRET'
+    key: YOUR_API_KEY,
+    secret: YOUR_API_SECRET
 });
 
 var q = new dl.Query();
