@@ -25,9 +25,6 @@ q.renameTo('my_new_schema');
 q.description('my_new_schema description text');
 
 client.query(q, function(err, result) {
-	console.log("THE credentials ARE : ", config);
-
-
     if (err) {
         console.log(err);
     } else {
