@@ -25,8 +25,8 @@ var q = new dl.Query('my_database');
 q.selectAll();
 q.from(q.expr(
     q.table('my_schema.t1'),
-    '$join', q.table('my_schema.t2'), '$on', q.column('my_schema.t1.c1'), '=', q.column('my_schema.t2.c1'),
-    '$join', q.table('my_schema.t3'), '$on', q.column('my_schema.t1.c1'), '=', q.column('my_schema.t3.c1')
+    '$join', q.table('my_schema.t2'), '$on', q.column('my_schema.t1.col1'), '=', q.column('my_schema.t2.col1'),
+    '$join', q.table('my_schema.t3'), '$on', q.column('my_schema.t1.col1'), '=', q.column('my_schema.t3.col1')
 ));
 
 client.query(q, function(err, result) {

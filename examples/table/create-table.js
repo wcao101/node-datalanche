@@ -36,7 +36,7 @@ q.columns({
     },
     col2: {
         data_type: {
-            name: 'varchar',
+            name: 'timestamptz',
             args: [ 50 ]
         },
         description: 'col2 description text',
@@ -45,11 +45,20 @@ q.columns({
     },
     col3: {
         data_type: {
-            name: 'integer'
+            name: 'text'
         },
         description: 'col3 description text',
         default_value: 0,
         not_null: true
+    },
+    col4: {
+        data_type: {
+            name: 'varchar',
+            args: [ 50 ]
+        },
+        description: 'col4 description text',
+        default_value: null,
+        not_null: false
     }
 });
 
