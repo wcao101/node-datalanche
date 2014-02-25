@@ -6,7 +6,7 @@
     "name": "datalanche",
     "homepage": "https://github.com/datalanche/node-datalanche",
     "description": "Official Node.js client for Datalanche.",
-    "version": "0.8.11",
+    "version": "0.8.12",
     "repository": {
         "type": "git",
         "url": "https://github.com/datalanche/node-datalanche.git"
