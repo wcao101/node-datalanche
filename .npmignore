@@ -1,3 +1,5 @@
 test
 examples
+circle.yml
+publish.sh
 .npmignore
