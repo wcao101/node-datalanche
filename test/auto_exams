@@ -9,17 +9,6 @@ npm install
 # file
 cd ./examples/schema
 
-# setup the config.json for production_server test
-if [ ! -f ../config.json ]; then \
-echo  setup the config.json for production_server test; \
-bash -c "cp ../config/config_production ../config.json"; \
-else 
-echo remove the old config.json; \
-bash -c "rm ../config.json"; \
-echo copy the production config.json into example folder; \
-bash -c "cp ../config/config_production ../config.json"; \
-fi \
-
 echo
 echo Make sure the previous databases name is changed back to my_database
 # make sure the previous database's name is changed back to my_database
@@ -90,7 +79,7 @@ echo testing select search example
 node ../table/select-search.js
 
 # create sample tables for select_joint
-sh ../../create_sample_tables
+sh ../../test/create_sample_tables
 
 # testing select_join example
 echo
