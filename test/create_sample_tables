@@ -1,40 +1,49 @@
 #!/bin/bash
+
+echo
+echo create a new table with the name of my_table
+node ../examples/table/create-table.js
+
+echo
+echo insert data into my_table
+node ../examples/table/insert.js
+
 echo rename the table my_table to t1
 # make sure the previous alterred schemas are cleaned up before examples testing
 curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
                         "alter_table": "my_schema.my_table",
-			"rename_to": "t1"
+                        "rename_to": "t1"
                       }'
 
 echo
 echo create a new table with the name of my_table
-node ../table/create-table.js
+node ../examples/table/create-table.js
 
 echo
 echo insert data into my_table
-node ../table/insert.js
+node ../examples/table/insert.js
 
 echo rename the table my_table to t2
 # make sure the previous alterred schemas are cleaned up before examples testing
-curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
+curl https://api.datalanche.com/my_database/query -X POST -u        "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type:                    application/json" -d '{
                         "alter_table": "my_schema.my_table",
-			"rename_to": "t2"
+                        "rename_to": "t2"
                       }'
 
 echo
 echo create a new table with the name of my_table
-node ../table/create-table.js
+node ../examples/table/create-table.js
 
 echo
 echo insert data into my_table
-node ../table/insert.js
+node ../examples/table/insert.js
 
 echo
 echo rename the table my_table to t3
 # make sure the previous alterred schemas are cleaned up before examples testing
 curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
                         "alter_table": "my_schema.my_table",
-			"rename_to": "t3"
+                        "rename_to": "t3"
                       }'
 
 echo
@@ -47,8 +56,8 @@ curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2
 
 echo
 echo create a new table with the name of my_table
-node ../table/create-table.js
+node ../examples/table/create-table.js
 
 echo
 echo insert data into my_table
-node ../table/insert.js
+node ../examples/table/insert.js

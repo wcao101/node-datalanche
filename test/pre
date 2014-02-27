@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#host api.datalanche.com
+
+echo
+echo Make sure the previous databases name is changed back to my_database
+# make sure the previous database's name is changed back to my_database
+curl https://api.datalanche.com/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
+                        "alter_database": "my_new_database",
+                        "rename_to": "my_database"
+                      }' 
+echo
+echo make sure previous schemas are cleaned up before examples testing
+# make sure previous schemas are cleaned up before examples testing
+curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
+                        "drop_schema": "my_schema",
+                        "cascade": true
+                      }'
+echo
+echo make sure the previous alterred schemas are cleaned up before examples testing
+# make sure the previous alterred schemas are cleaned up before examples testing
+curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
+                        "drop_schema": "my_new_schema",
+                        "cascade": true
+                      }'
+
+echo
+echo create a plain new schema
+# create a plain new schema
+curl https://api.datalanche.com/my_database/query -X POST -u "GoyY7hI2S5igDS4pG2Vdyg==:e02C96sqR5mvUoQXkCC2Gg==" -H "Content-Type: application/json" -d '{
+                        "create_schema": "my_new_schema"
+                        }'
