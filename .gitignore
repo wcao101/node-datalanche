@@ -8,3 +8,7 @@ npm-debug.log
 # emacs
 [#]*[#]
 .\#*
+
+# for local testing
+local_examples
+local_test
