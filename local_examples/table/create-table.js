@@ -10,10 +10,9 @@
 //
 var fs = require('fs');
 var dl = require('../../lib');
-var path = require('path');
-var dir_name = __dirname;
 
-var config = JSON.parse(fs.readFileSync(path.join(dir_name, '/..', '/config.json')).toString());
+var config = fs.readFileSync('../examples/config.json');
+config = JSON.parse(config.toString());
 
 // Please find your API credentials here: https://www.datalanche.com/account before use
 var YOUR_API_KEY = config.api_key;
@@ -37,7 +36,8 @@ q.columns({
     },
     col2: {
         data_type: {
-            name: 'timestamptz'
+            name: 'timestamptz',
+            args: [ 50 ]
         },
         description: 'col2 description text',
         default_value: null,
@@ -48,7 +48,7 @@ q.columns({
             name: 'text'
         },
         description: 'col3 description text',
-        default_value: 'default_text',
+        default_value: 0,
         not_null: true
     },
     col4: {
@@ -56,7 +56,9 @@ q.columns({
             name: 'varchar',
             args: [ 50 ]
         },
-        description: 'col4 description text'
+        description: 'col4 description text',
+        default_value: null,
+        not_null: false
     }
 });
 

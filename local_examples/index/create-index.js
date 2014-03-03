@@ -1,15 +1,14 @@
 //
-// Drop the given table. Must have admin access for the given database.
+// Create an index on the given table. Must have admin access for the given database.
 //
 // equivalent SQL:
-// DROP TABLE my_schema.my_table CASCADE;
+// CREATE UNIQUE INDEX my_index ON my_schema.my_table USING btree (col1, col2);
 //
 var fs = require('fs');
 var dl = require('../../lib');
-var path = require('path');
-var dir_name = __dirname;
 
-var config = JSON.parse(fs.readFileSync(path.join(dir_name, '/..', '/config.json')).toString());
+var config = fs.readFileSync('../examples/config.json');
+config = JSON.parse(config.toString());
 
 // Please find your API credentials here: https://www.datalanche.com/account before use
 var YOUR_API_KEY = config.api_key;
@@ -21,8 +20,11 @@ var client = new dl.Client({
 });
 
 var q = new dl.Query('my_database');
-q.dropTable('my_schema.my_table');
-q.cascade(true);
+q.createIndex('my_index');
+q.unique(true);
+q.onTable('my_schema.my_table');
+q.usingMethod('btree');
+q.columns([ 'col1', 'col2' ]);
 
 client.query(q, function(err, result) {
 
@@ -30,6 +32,6 @@ client.query(q, function(err, result) {
         console.log(err);
         process.exit(1);        
     } else {
-        console.log('drop_table succeeded!');
+        console.log('create_index succeeded!');
     }
 });

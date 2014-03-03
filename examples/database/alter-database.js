@@ -6,9 +6,10 @@
 //
 var fs = require('fs');
 var dl = require('../../lib');
+var path = require('path')
+var dir_name = __dirname;
 
-var config = fs.readFileSync('../examples/config.json');
-config = JSON.parse(config.toString());
+var config = JSON.parse(fs.readFileSync(path.join(dir_name, '/..', '/config.json')).toString());
 
 // Please find your API credentials here: https://www.datalanche.com/account before use
 var YOUR_API_KEY = config.api_key;

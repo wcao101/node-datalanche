@@ -1,12 +1,17 @@
 //
-// Show the given schema's details. Must have read access for the given database.
+// Search the table and retrieve the rows. Must have read access for the given database.
+//
+// equivalent SQL:
+// SELECT * FROM my_schema.my_table WHERE SEARCH 'hello world'
+//
+// NOTE: Search clause is sent to ElasticSearch. The search
+// results are used as a filter when executing the SQL query.
 //
 var fs = require('fs');
 var dl = require('../../lib');
-var path = require('path');
-var dir_name = __dirname;
 
-var config = JSON.parse(fs.readFileSync(path.join(dir_name, '/..', '/config.json')).toString());
+var config = fs.readFileSync('../examples/config.json');
+config = JSON.parse(config.toString());
 
 // Please find your API credentials here: https://www.datalanche.com/account before use
 var YOUR_API_KEY = config.api_key;
@@ -18,13 +23,13 @@ var client = new dl.Client({
 });
 
 var q = new dl.Query('my_database');
-q.describeSchema('my_schema');
+q.selectAll().from('my_schema.my_table').search('hello world');
 
 client.query(q, function(err, result) {
 
     if (err) {
         console.log(err);
-        process.exit(1);        
+        process.exit(1);
     } else {
         console.log(JSON.stringify(result, null, '  '));
     }
